@@ -42,82 +42,19 @@ class Checker:
         }
 
         self.headers_settings = read_json(self.CURRENT_DIR.parent / "db" / "#general" / "headers_settings.json")
-        self.indices = None
 
-    async def define_columns_indices(self, headers: list) -> None:
-        indices = {}
-        columns: dict = self.shop_config.get("columns")
-        for column_key, column_name in columns.items():
-            if column_name in headers:
-                indices[column_key] = headers.index(column_name)
-        self.indices = indices
+        self.auth_proxies: List[dict] = []
 
-    async def prepare_data(self, data: list):
-        if not self.indices:
-            self.logger.warning("No method was called to define the indexes."
-                                "You should first call the method 'define_columns_indices'")
-            return
+    async def proxy_auth(self) -> None:
+        for proxy in self.proxies:
+            username = proxy.split(':')[0]
+            password = proxy.split(':')[1].split('@')[0]
+            host_and_port = proxy.split('@')[1]
 
-        price_index = self.indices.get("supplier_price")
-        shipping_index = self.indices.get("supplier_shipping")
-        quantity_index = self.indices.get("supplier_quantity")
-        for i, row in enumerate(data):
-            price = row[price_index] if price_index else None
-            shipping = row[shipping_index] if shipping_index else None
-            quantity = row[quantity_index] if quantity_index else None
-            if price and not can_be_type(price, float):
-                self.logger.warning(logger_message_create(i, price, "float"))
-                data[i][price_index] = 0
-                data[i][shipping_index] = 0
-                data[i][quantity_index] = 0
-                continue
-            elif shipping and not can_be_type(shipping, float):
-                self.logger.warning(logger_message_create(i, shipping, "float"))
-                data[i][price_index] = 0
-                data[i][shipping_index] = 0
-                data[i][quantity_index] = 0
-                continue
-            elif quantity and not can_be_type(quantity, int):
-                self.logger.warning(logger_message_create(i, quantity, "int"))
-                data[i][price_index] = 0
-                data[i][shipping_index] = 0
-                data[i][quantity_index] = 0
-                continue
-        c = 1
+            proxy_url = 'http://' + host_and_port
+            proxy_auth = BasicAuth(username, password)
 
-    async def prepare_links(self, data: list, marketplace: str):
-        if not self.indices:
-            raise Exception("In order to call this method you first need to define column indices using the method "
-                            "'define_columns_indices()'")
-        link_index = self.indices.get("supplier_link")
-        supplier_index = self.indices.get("supplier_name")
-        for i, row in enumerate(data):
-            link = row[link_index]
-            if link is None or link == '':
-                data[i][supplier_index] = "{no_link}"
-            elif marketplace not in link:
-                data[i][supplier_index] = "{not_" + marketplace + "_link}"
-
-    async def data_proc(self, data: list, batch_size: int = 100):
-        self.logger.info(f"Split the data into parts by {batch_size} pieces")
-        data_processed = {}
-        piece = 1
-        for i in range(0, len(data), batch_size):
-            data_processed[piece] = data[i:i + batch_size]
-            piece += 1
-
-        return data_processed
-
-    @staticmethod
-    async def proxy_auth(proxy: str) -> tuple:
-        username = proxy.split(':')[0]
-        password = proxy.split(':')[1].split('@')[0]
-        host_and_port = proxy.split('@')[1]
-
-        proxy_url = 'http://' + host_and_port
-        proxy_auth = BasicAuth(username, password)
-
-        return proxy_url, proxy_auth
+            self.auth_proxies.append({"url": proxy_url, "auth": proxy_auth})
 
     async def request(self, link: str, proxy: dict):
         async with aiohttp.ClientSession() as session:
@@ -186,13 +123,14 @@ class Checker:
         current_row_data["page"] = await self.request(link, proxy)
         return current_row_data
 
-    async def get_pages(self, data: list, batch_size: int = 10):
-        proxy_auth_data = []
+    async def get_pages(self, data: Dict[str, dict], batch_size: int = 10):
         result = []
         self.logger.info("Authorization proxies")
-        for proxy in self.proxies:
-            proxy_url, proxy_auth = await self.proxy_auth(proxy)
-            proxy_auth_data.append({"url": proxy_url, "auth": proxy_auth})
+        if not self.proxies:
+            raise Exception("No proxy was specified. In order to continue code execution you need to "
+                            "specify a set of proxies in the format: "
+                            "[{'url': proxy_url1, 'auth': proxy_auth1}, {'url': proxy_url2, 'auth': proxy_auth2}]")
+        await self.proxy_auth()
 
         while data:
             tasks = []
@@ -202,29 +140,24 @@ class Checker:
             for row in current_batch:
                 if self.user_agents:
                     self.headers_settings["user-agent"] = random.choice(self.user_agents)
-                if proxy_auth_data:
-                    proxy = random.choice(proxy_auth_data)
-                else:
-                    proxy = None
+                proxy = random.choice(self.auth_proxies)
                 tasks.append(self.fetch(row, proxy))
             result.extend(await asyncio.gather(*tasks))
         return result
 
 
 class EbayChecker(Checker):
-    def __init__(self, data: list, proxies: list, user_agents: list, shop_config: dict,
+    def __init__(self, data: Dict[str, dict], proxies: list, user_agents: list, shop_config: dict,
                  exceptions: list, exceptions_repricer: list):
         super().__init__(proxies, user_agents, shop_config, exceptions, exceptions_repricer)
-        self.data = data
+        self.data: Dict[str, dict] = data
         self.strategy: Literal["drop", "listings"] = shop_config.get("strategy")
-
-        self.data_by_pieces: dict = None
         self.checked: List[Dict] = []
 
     async def parsing_page(self, item_data: dict):
         page = item_data.get("page")
         
-        parser = EbayParser()
+        parser = EbayParser(page=page)
         what_need_to_parse = self.shop_config.get("what_need_to_parse")
         await asyncio.gather(
             parser.look_out_of_stock_triggers(),
@@ -235,26 +168,13 @@ class EbayChecker(Checker):
         )
 
     async def start_check(self):
-        if not self.indices:
-            raise Exception("For using this method you must to use 'define_columns_indices'")
-        
-        self.logger.info("Starting check data")
-        self.data_by_pieces = await self.data_proc(self.data)
+        self.logger.info("Start checking data")
 
-        for piece, data_list in self.data_by_pieces.items():
-            self.logger.info(f"Checking {piece} piece of data")
-            self.logger.info("Checking links before sending requests")
-            await self.prepare_links(data_list, 'ebay')
-            await self.prepare_data(data_list)
-            pages = await self.get_pages(data_list)
+        pages = self.get_pages(self.data)
 
     async def end_check(self):
         self.logger.info("Check was end. Cleaning cech...")
-        self.data_by_pieces = None
         self.checked = []
         self.proxies = None
         self.user_agents = None
         self.shop_config = None
-        self.indices = None
-
-
