@@ -1,0 +1,37 @@
+[
+    {
+        "shop_name": "test",
+        "table_id": "1B-kKXAXurRAW_KOeY7yACo1LamnRzW99QPaoWwXH5Qs",
+        "worksheet": "INVENTORY",
+        "qty_of_suppliers": 1,
+        "suppliers": [
+            {
+                "columns": {
+                    "sku": "sku",
+                    "supplier_link": "supplier1",
+                    "supplier_price": "price ebay",
+                    "supplier_shipping": "shipping",
+                    "supplier_qty": "stock",
+                    "supplier_days": "shipping days",
+                    "supplier_name": "supplier name",
+                    "variation": "variation",
+                    "part_number": "mpn",
+                    "merchant_shipping_group_name": "weight",
+                    "product_dimensions": "dimensions",
+                    "color": "color",
+                    "unit_count": "unit count",
+                    "material_type": "material type",
+                    "power_source": "power source",
+                    "voltage": "voltage",
+                    "wattage": "wattage",
+                    "included_components": "included components",
+                    "speed": "speed",
+                    "number_of_boxes": "number of boxes",
+                    "title": "title",
+                    "description": "description"
+                },
+                "marketplace": "ebay"
+            }
+        ]
+    }
+]
