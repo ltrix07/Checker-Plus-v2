@@ -15,7 +15,6 @@ def main():
     spreadsheet_id = shop_info['table_id']
     worksheet_name = shop_info['worksheet']
 
-    # Отримуємо дані з таблиці і зберігаємо у файл
     data = sheet_manager.get_sheet_data(
         spreadsheet_id, worksheet_name, columns_map)
     fetched_data_file = 'fetched_data.json'
@@ -25,7 +24,7 @@ def main():
     with open(fetched_data_file, 'r') as f:
         update_data = json.load(f)
 
-    # Оновлюємо дані в таблиці
+ 
     sheet_manager.update_sheet_data(
         spreadsheet_id, worksheet_name, update_data, columns_map)
     print("Data from fetched_data.json updated back to the sheet")
