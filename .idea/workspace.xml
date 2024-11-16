@@ -4,18 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="81372727-11cb-4878-b167-cb1c131c94e6" name="Changes" comment="delete no use methods">
-      <change afterPath="$PROJECT_DIR$/tests/checker/test_fetch.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/checker/test_get_pages.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/checker/test_request.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/utils/pytest.ini" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/utils/test_date_to_days.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/utils/test_get_next_batch.py" afterDir="false" />
+    <list default="true" id="81372727-11cb-4878-b167-cb1c131c94e6" name="Changes" comment="tests 16.11.24">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/checker_plus/checker.py" beforeDir="false" afterPath="$PROJECT_DIR$/checker_plus/checker.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checker_plus/parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/checker_plus/parser.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checker_plus/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/checker_plus/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/checker/test_proxy_auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/checker/test_proxy_auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/checker/test_get_pages.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/checker/test_get_pages.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,86 +54,88 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;Python tests.Python tests for test_date_to_days.test_date_to_days.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_define_columns_indices.test_define_columns_indices.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_fetch.test_fetch.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_get_color.test_get_color_empty.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_get_color.test_get_color_valid.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_get_dimensions_lwh.test_get_dimensions_lwh_.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_get_dimensions_lwh.test_get_dimensions_lwh_empty.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_get_dimensions_lwh.test_get_dimensions_lwh_valid.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_get_last_shipping_day.test_get_item_title_valid.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_get_price.test_get_price_empty.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_look_not_shipping_to_usa_trigger.test_look_not_shipping_to_usa_trigger_standard.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests for test_prepare_data.test_prepare_data.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests for test_proxy_auth.test_proxy_auth_errors.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_request.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_request.test_request_client_response_error.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_request.test_request_success.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_data_proc.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_date_to_days.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_define_columns_indices.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_fetch.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_get_color.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_get_dimensions_lwh.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_get_height.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_get_included_components.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_get_item_title.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_get_last_shipping_day.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_get_length.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_get_next_batch.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_get_part_number.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_get_power_source.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_get_price.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_get_quantity.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_get_shipping_price.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_get_supplier_name.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_get_voltage.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_get_wattage.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_get_width.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_look_catalog_trigger.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_look_not_shipping_to_usa_trigger.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_look_out_of_stock_triggers.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_look_pick_up_trigger.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_look_variation_trigger.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_prepare_data.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_proxy_auth.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_request.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest parser.executor&quot;: &quot;Run&quot;,
-    &quot;Python.checker.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main_tests.executor&quot;: &quot;Run&quot;,
-    &quot;Python.parser.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_data_proc.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_define_columns_indices.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_get_dimensions_lwh.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_get_height.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_get_included_components.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_get_item_color.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_get_item_title.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_get_last_shipping_day.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_get_length.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_get_pages.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_get_part_number.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_get_power_source.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_get_price.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_get_quantity.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_get_shipping_price.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_get_supplier_name.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_get_voltage.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_get_wattage.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_get_width.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_prepare_data.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_prepare_links.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;ltrix&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Владимир/PycharmProjects/Checker-Plus-v2/tests/checker&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "Python tests.Python tests for test_date_to_days.test_date_to_days.executor": "Run",
+    "Python tests.Python tests for test_define_columns_indices.test_define_columns_indices.executor": "Run",
+    "Python tests.Python tests for test_fetch.test_fetch.executor": "Run",
+    "Python tests.Python tests for test_get_color.test_get_color_empty.executor": "Run",
+    "Python tests.Python tests for test_get_color.test_get_color_valid.executor": "Run",
+    "Python tests.Python tests for test_get_dimensions_lwh.test_get_dimensions_lwh_.executor": "Run",
+    "Python tests.Python tests for test_get_dimensions_lwh.test_get_dimensions_lwh_empty.executor": "Run",
+    "Python tests.Python tests for test_get_dimensions_lwh.test_get_dimensions_lwh_valid.executor": "Run",
+    "Python tests.Python tests for test_get_last_shipping_day.test_get_item_title_valid.executor": "Run",
+    "Python tests.Python tests for test_get_pages.test_get_pages_empty_data.executor": "Run",
+    "Python tests.Python tests for test_get_price.test_get_price_empty.executor": "Run",
+    "Python tests.Python tests for test_look_not_shipping_to_usa_trigger.test_look_not_shipping_to_usa_trigger_standard.executor": "Debug",
+    "Python tests.Python tests for test_prepare_data.test_prepare_data.executor": "Debug",
+    "Python tests.Python tests for test_proxy_auth.test_proxy_auth_errors.executor": "Run",
+    "Python tests.Python tests for test_request.executor": "Run",
+    "Python tests.Python tests for test_request.test_request_client_response_error.executor": "Run",
+    "Python tests.Python tests for test_request.test_request_success.executor": "Run",
+    "Python tests.Python tests in test_data_proc.py.executor": "Run",
+    "Python tests.Python tests in test_date_to_days.py.executor": "Run",
+    "Python tests.Python tests in test_define_columns_indices.py.executor": "Run",
+    "Python tests.Python tests in test_fetch.py.executor": "Run",
+    "Python tests.Python tests in test_get_color.py.executor": "Run",
+    "Python tests.Python tests in test_get_dimensions_lwh.py.executor": "Run",
+    "Python tests.Python tests in test_get_height.py.executor": "Run",
+    "Python tests.Python tests in test_get_included_components.py.executor": "Run",
+    "Python tests.Python tests in test_get_item_title.py.executor": "Run",
+    "Python tests.Python tests in test_get_last_shipping_day.py.executor": "Run",
+    "Python tests.Python tests in test_get_length.py.executor": "Run",
+    "Python tests.Python tests in test_get_next_batch.py.executor": "Run",
+    "Python tests.Python tests in test_get_pages.py.executor": "Run",
+    "Python tests.Python tests in test_get_part_number.py.executor": "Run",
+    "Python tests.Python tests in test_get_power_source.py.executor": "Run",
+    "Python tests.Python tests in test_get_price.py.executor": "Run",
+    "Python tests.Python tests in test_get_quantity.py.executor": "Run",
+    "Python tests.Python tests in test_get_shipping_price.py.executor": "Run",
+    "Python tests.Python tests in test_get_supplier_name.py.executor": "Run",
+    "Python tests.Python tests in test_get_voltage.py.executor": "Run",
+    "Python tests.Python tests in test_get_wattage.py.executor": "Run",
+    "Python tests.Python tests in test_get_width.py.executor": "Run",
+    "Python tests.Python tests in test_look_catalog_trigger.py.executor": "Run",
+    "Python tests.Python tests in test_look_not_shipping_to_usa_trigger.py.executor": "Run",
+    "Python tests.Python tests in test_look_out_of_stock_triggers.py.executor": "Run",
+    "Python tests.Python tests in test_look_pick_up_trigger.py.executor": "Run",
+    "Python tests.Python tests in test_look_variation_trigger.py.executor": "Run",
+    "Python tests.Python tests in test_prepare_data.py.executor": "Run",
+    "Python tests.Python tests in test_proxy_auth.py.executor": "Run",
+    "Python tests.Python tests in test_request.py.executor": "Run",
+    "Python tests.pytest parser.executor": "Run",
+    "Python.checker.executor": "Run",
+    "Python.main_tests.executor": "Run",
+    "Python.parser.executor": "Run",
+    "Python.test_data_proc.executor": "Run",
+    "Python.test_define_columns_indices.executor": "Run",
+    "Python.test_get_dimensions_lwh.executor": "Run",
+    "Python.test_get_height.executor": "Run",
+    "Python.test_get_included_components.executor": "Run",
+    "Python.test_get_item_color.executor": "Run",
+    "Python.test_get_item_title.executor": "Run",
+    "Python.test_get_last_shipping_day.executor": "Run",
+    "Python.test_get_length.executor": "Run",
+    "Python.test_get_pages.executor": "Run",
+    "Python.test_get_part_number.executor": "Run",
+    "Python.test_get_power_source.executor": "Run",
+    "Python.test_get_price.executor": "Run",
+    "Python.test_get_quantity.executor": "Run",
+    "Python.test_get_shipping_price.executor": "Run",
+    "Python.test_get_supplier_name.executor": "Run",
+    "Python.test_get_voltage.executor": "Run",
+    "Python.test_get_wattage.executor": "Run",
+    "Python.test_get_width.executor": "Run",
+    "Python.test_prepare_data.executor": "Run",
+    "Python.test_prepare_links.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "ltrix",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/Владимир/PycharmProjects/Checker-Plus-v2/tests/checker",
+    "settings.editor.selected.configurable": "preferences.lookFeel"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Владимир\PycharmProjects\Checker-Plus-v2\tests\checker" />
@@ -150,8 +144,8 @@
       <recent name="C:\Users\Владимир\PycharmProjects\Checker-Plus-v2\tests\parser\ebayPages" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests in test_get_next_batch.py">
-    <configuration name="Python tests for test_request" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python tests.Python tests in test_get_pages.py">
+    <configuration name="Python tests for test_fetch.test_fetch" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="Checker-Plus-v2" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -162,11 +156,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_request&quot;" />
+      <option name="_new_target" value="&quot;test_fetch.test_fetch&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_request.test_request_client_response_error" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_get_pages.test_get_pages_empty_data" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="Checker-Plus-v2" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -177,7 +171,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_request.test_request_client_response_error&quot;" />
+      <option name="_new_target" value="&quot;test_get_pages.test_get_pages_empty_data&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -211,7 +205,7 @@
       <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests in test_request.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests in test_get_pages.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="Checker-Plus-v2" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -222,7 +216,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/tests/checker/test_request.py&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/tests/checker/test_get_pages.py&quot;" />
       <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method v="2" />
     </configuration>
@@ -245,20 +239,20 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_request" />
-      <item itemvalue="Python tests.Python tests for test_request.test_request_client_response_error" />
+      <item itemvalue="Python tests.pytest parser" />
+      <item itemvalue="Python tests.Python tests for test_fetch.test_fetch" />
+      <item itemvalue="Python tests.Python tests for test_get_pages.test_get_pages_empty_data" />
+      <item itemvalue="Python tests.Python tests in test_get_pages.py" />
       <item itemvalue="Python tests.Python tests in test_fetch.py" />
       <item itemvalue="Python tests.Python tests in test_get_next_batch.py" />
-      <item itemvalue="Python tests.Python tests in test_request.py" />
-      <item itemvalue="Python tests.pytest parser" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests in test_get_pages.py" />
+        <item itemvalue="Python tests.Python tests for test_get_pages.test_get_pages_empty_data" />
+        <item itemvalue="Python tests.Python tests for test_fetch.test_fetch" />
         <item itemvalue="Python tests.Python tests in test_get_next_batch.py" />
         <item itemvalue="Python tests.Python tests in test_fetch.py" />
-        <item itemvalue="Python tests.Python tests in test_request.py" />
-        <item itemvalue="Python tests.Python tests for test_request.test_request_client_response_error" />
-        <item itemvalue="Python tests.Python tests for test_request" />
       </list>
     </recent_temporary>
   </component>
@@ -318,7 +312,15 @@
       <option name="project" value="LOCAL" />
       <updated>1729580242194</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="tests 16.11.24">
+      <option name="closed" value="true" />
+      <created>1731751681385</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1731751681385</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -347,6 +349,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="drop" />
     <MESSAGE value="delete no use methods" />
-    <option name="LAST_COMMIT_MESSAGE" value="delete no use methods" />
+    <MESSAGE value="tests 16.11.24" />
+    <option name="LAST_COMMIT_MESSAGE" value="tests 16.11.24" />
   </component>
 </project>

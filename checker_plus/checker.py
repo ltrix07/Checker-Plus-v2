@@ -11,6 +11,18 @@ from pathlib import Path
 
 
 class Checker:
+    """
+    Общий класс чекера, который описывают логику работы пакета для сбора информации из ссылок поставщиков,
+    полученных из таблицы инвентаря.
+
+    Этот класс является родительским для всех остальных в этом пакете.
+    :param indices: Словарь, который с индексами колонок в таблице.
+    :param proxies: Список прокси.
+    :param user_agents: Список юзер агентов.
+    :param shop_config: Параметры магазина. Обычно должны быть получены из файла shop_data.json
+    :param exceptions: Список СКУ тех товаров, на которых не нужно обновлять информацию даже если есть новые данные.
+    :param exceptions_repricer: Список СКУ тех товаров, которые не надо обновлять в Репрайсере.
+    """
     CURRENT_DIR = Path(__file__).parent
 
     def __init__(self, indices: Dict[str, int], proxies: list, user_agents: list, shop_config: dict,
@@ -41,18 +53,26 @@ class Checker:
             },
         }
 
-        self.headers_settings = None
+        self.headers_settings = {}
 
         self.auth_proxies: List[dict] = []
         self.indices = indices
 
     def __call__(self, *args, **kwargs):
+        """
+        При определении класса проверяем есть ли файл headers_settings.json.
+        Если файл есть, то читаем с него стандартные настройки заголовков.
+        """
         try:
             self.headers_settings = read_json(self.CURRENT_DIR.parent / "db" / "#general" / "headers_settings.json")
         except FileNotFoundError:
             pass
 
     async def proxy_auth(self) -> None:
+        """
+        Производит авторизацию прокси при помощи 'aiohttp.BasicAuth' для дальнейшего их использования через 'aiohttp'.
+        :return: None
+        """
         for proxy in self.proxies:
             if "@" not in proxy or ":" not in proxy:
                 raise TypeError(f"Your proxy must be type 'login:password@ip:port' you specified '{proxy}'")
@@ -65,7 +85,13 @@ class Checker:
 
             self.auth_proxies.append({"url": proxy_url, "auth": proxy_auth})
 
-    async def request(self, link: str, proxy: dict):
+    async def request(self, link: str, proxy: dict) -> str:
+        """
+        Производит запрос по ссылке для получения контекста страницы.
+        :param link: Ссылка на товар.
+        :param proxy: Прокси авторизованный через 'aiohttp.BasicAuth'.
+        :return: Наполнение страницы в виде строки либо строку с текстом ошибки.
+        """
         async with aiohttp.ClientSession() as session:
             try:
                 if not proxy:
@@ -115,7 +141,13 @@ class Checker:
                 self.report["errors"]["website_close_connection"] += 1
                 return "{website_close_connection}"
 
-    async def fetch(self, item_data: Dict[str, Any], proxy: dict):
+    async def fetch(self, item_data: Dict[str, Any], proxy: dict) -> dict:
+        """
+        Функция для подготовки данных к запросу через метод 'Checker.request'
+        :param item_data: Словарь в виде данных полученных по определенному товару из таблицы
+        :param proxy: Прокси авторизованный через 'aiohttp.BasicAuth'.
+        :return: Словарь в формате 'item_data' но с дополнительной информацией в ключе 'page'.
+        """
         sku = item_data.get("sku")
         if sku in self.exceptions or sku == '' or not sku:
             item_data["page"] = None
@@ -126,7 +158,16 @@ class Checker:
         return item_data
 
     async def get_pages(self, data: List[Dict[str, Any]], batch_size: int = 5) -> tuple[Dict[str, Any]]:
+        """
+        Порционно проходит по списку данных, полученных из таблиц, и получает контекст страниц по полученным ссылкам.
+        :param data: Список с вложенными словарями. Каждый вложенный словарь - это строка из таблицы ключем, которого
+        является название колонки, а значение - соответствующее значение в этой колонке.
+        :param batch_size: Размер порции. По умолчанию 5.
+        :return: tuple[Dict[str, Any]]
+        """
         tasks = []
+        all_data_len = len(data)
+        checked = batch_size
         self.logger.info("Authorization proxies")
         if not self.proxies:
             raise Exception("No proxy was specified. In order to continue code execution you need to "
@@ -134,16 +175,25 @@ class Checker:
                             "[{'url': proxy_url1, 'auth': proxy_auth1}, {'url': proxy_url2, 'auth': proxy_auth2}]")
         await self.proxy_auth()
 
+        self.logger.info(f"Checking: [{checked} | {all_data_len}]")
         current_batch = get_next_batch(data=data, batch_size=batch_size)
         for item_data in current_batch:
             if self.user_agents:
                 self.headers_settings["user-agent"] = random.choice(self.user_agents)
             proxy = random.choice(self.auth_proxies)
             tasks.append(self.fetch(item_data=item_data, proxy=proxy))
+            checked += batch_size
         return await asyncio.gather(*tasks)
 
 
 class EbayChecker(Checker):
+    """
+    Класс нацеленный на обработку товаров с ebay.com. Он наследует класс Checker.
+    :param data: Список с вложенными словарями. Каждый вложенный словарь - это строка из таблицы ключем, которого
+        является название колонки, а значение - соответствующее значение в этой колонке.
+
+    Остальные параметры имеют аналогичное значение, как и в родительском классе Checker.
+    """
     def __init__(self, data: List[Dict[str, Any]], indices: Dict[str, int], proxies: list, user_agents: list,
                  shop_config: dict, exceptions: list, exceptions_repricer: list):
         super().__init__(indices=indices, proxies=proxies, user_agents=user_agents,
@@ -153,6 +203,12 @@ class EbayChecker(Checker):
         self.checked: List[Dict[str, Any]] = []
 
     async def _update_report(self, old_data: tuple[float, float, int], new_data: tuple[float, float, int]):
+        """
+        Обновляет объект отчета по путем сравнения старой информации из таблицы и новой, полученной из ссылки.
+        :param old_data: Кортеж из трех старых значений (цена, цена доставки, количество)
+        :param new_data: Кортеж из трех новых значений
+        :return: None
+        """
         if old_data[0] != new_data[0]:
             self.report["new_price"] += 1
         if old_data[1] != new_data[1]:
@@ -163,6 +219,11 @@ class EbayChecker(Checker):
             self.report["nones_new"] += 1
 
     async def _parsing_triggers(self, parser: EbayParser):
+        """
+        Проверяет триггерные места на странице. Те, что указывают на отсутствие товара неверное местоположение и т.д.
+        :param parser: Экземпляр класса EbayParser
+        :return: None
+        """
         await asyncio.gather(
             parser.look_out_of_stock_triggers(),
             parser.look_pick_up_trigger(),
@@ -172,6 +233,12 @@ class EbayChecker(Checker):
         )
 
     async def _parsing_main_content(self, parser: EbayParser):
+        """
+        Собирает основной контент со страницы. Для определения того что нужно собрать, а что нет использует значение
+        'what_need_to_parse' из объекта конфигурации.
+        :param parser: Экземпляр класса EbayParser
+        :return: Словарь с собранными данными.
+        """
         what_need_to_parse = self.shop_config.get("what_need_to_parse")
         task_map = {
             "supplier_price": parser.get_price,
@@ -198,6 +265,12 @@ class EbayChecker(Checker):
         return parsed_data
 
     async def parsing_page(self, item_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        На основе информации в словаре 'item_data' что является элементом списка с данными из таблицы,
+        собирает данные со страницы.
+        :param item_data: Объект строки с данными, в которой уже есть ключ 'page'.
+        :return: Объект 'item_data' с новой информацией полученной со страницы.
+        """
         old_price = retype(item_data.get("supplier_price"), float, 0.0)
         old_shipping_price = retype(item_data.get("supplier_shipping"), float, 0.0)
         old_quantity = retype(item_data.get("supplier_qty"), int, 0)
@@ -228,6 +301,11 @@ class EbayChecker(Checker):
         return item_data
 
     async def start_check(self, batch_size: int = 5):
+        """
+        Начинает работу чекера.
+        :param batch_size: Размер шага для порционного чека ссылок. По умолчанию 5.
+        :return: None
+        """
         self.logger.info("Start checking data")
 
         while self.data:
@@ -237,6 +315,10 @@ class EbayChecker(Checker):
                 self.checked.append(actual_data)
 
     async def end_check(self):
+        """
+        Заканчивает работу чекера и очищает кеш.
+        :return: None
+        """
         self.logger.info("Check was end. Cleaning cech...")
         self.checked = []
         self.proxies = None
