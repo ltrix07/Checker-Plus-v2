@@ -1,6 +1,7 @@
 import json
 from datetime import datetime, date
-from typing import Dict
+from typing import Dict, List, Any
+from itertools import islice
 
 
 def can_be_type(value: str, target_type) -> bool:
@@ -33,7 +34,20 @@ async def date_to_days(string_with_date: str) -> str:
         return "0days"
 
 
+def get_next_batch(data: List[Dict[str, Any]], batch_size: int) -> List[Dict[str, Any]]:
+    batch = data[:batch_size]
+    del data[:batch_size]
+    return batch
+
+
 def logger_message_create(line_i: int, elem: str, type_: str):
     return f"In the line {line_i + 1} string '{elem}' cannot be cast to type {type_}." \
            f"Therefore, if data from the site is received incorrectly," \
            f"the quantity of goods will be 0."
+
+
+def retype(value: Any, type_: type, def_value):
+    try:
+        return type_(value)
+    except TypeError:
+        return def_value

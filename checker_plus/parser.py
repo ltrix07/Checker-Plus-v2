@@ -105,6 +105,18 @@ class EbayParser(Parser):
         self.not_send_to_usa: bool = False
         self.pick_up: bool = False
 
+    async def check_exceptions(self):
+        if self.out_of_stock:
+            return "{out_of_stock}"
+        if self.catalog_link:
+            return "{link_on_catalog}"
+        if self.proxy_ban:
+            return "{proxy_ban}"
+        if self.not_send_to_usa:
+            return "{supplier_not_in_usa}"
+        if self.pick_up:
+            return "{pick_up_only}"
+
     async def look_out_of_stock_triggers(self) -> None:
         trigger = await self.search(self.OUT_OFF_STOCK_TRIGGERS, in_text=True)
         if trigger:
