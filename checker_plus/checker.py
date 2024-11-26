@@ -2,6 +2,7 @@ import logging
 import random
 import aiohttp
 import asyncio
+from cache_handler import CSV
 from typing import List, Dict, Literal, Any
 from checker_plus.utils import read_json, get_next_batch, retype
 from checker_plus.parser import EbayParser
@@ -195,12 +196,14 @@ class EbayChecker(Checker):
     Остальные параметры имеют аналогичное значение, как и в родительском классе Checker.
     """
     def __init__(self, data: List[Dict[str, Any]], indices: Dict[str, int], proxies: list, user_agents: list,
-                 shop_config: dict, exceptions: list, exceptions_repricer: list):
+                 shop_config: dict, exceptions: list, exceptions_repricer: list, cache_path: str, errors_path: str):
         super().__init__(indices=indices, proxies=proxies, user_agents=user_agents,
                          shop_config=shop_config, exceptions=exceptions, exceptions_repricer=exceptions_repricer)
         self.data: List[Dict[str, Any]] = data
         self.strategy: Literal["drop", "listings"] = shop_config.get("strategy")
-        self.checked: List[Dict[str, Any]] = []
+        self.cache_path = cache_path
+        self.checked_file = CSV(cache_path, self.shop_config.get("columns"))
+        self.errors_file = CSV(errors_path, ["sku", "error_type"])
 
     async def _update_report(self, old_data: tuple[float, float, int], new_data: tuple[float, float, int]):
         """
@@ -291,8 +294,10 @@ class EbayChecker(Checker):
                 "supplier_price": 0.0,
                 "supplier_shipping": 0.0,
                 "supplier_qty": 0,
-                "supplier_name": exception_trigger
+                "supplier_name": exception_trigger[0]
             })
+            if exception_trigger[1]:
+                self.errors_file.append_to_file([{"sku": item_data["sku"], "error_type": exception_trigger[1]}])
             await self._update_report((old_price, old_shipping_price, old_quantity), (0.0, 0.0, 0))
             return item_data
 
@@ -307,12 +312,15 @@ class EbayChecker(Checker):
         :return: None
         """
         self.logger.info("Start checking data")
+        temporary_csv = CSV(self.cache_path, self.shop_config.get("columns"))
 
         while self.data:
             items_data = await self.get_pages(self.data, batch_size=batch_size)
+            new_data = []
             for item_data in items_data:
                 actual_data = await self.parsing_page(item_data)
-                self.checked.append(actual_data)
+                new_data.append(actual_data)
+            temporary_csv.append_to_file(new_data)
 
     async def end_check(self):
         """
@@ -320,7 +328,6 @@ class EbayChecker(Checker):
         :return: None
         """
         self.logger.info("Check was end. Cleaning cech...")
-        self.checked = []
         self.proxies = None
         self.user_agents = None
         self.shop_config = None
