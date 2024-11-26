@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="81372727-11cb-4878-b167-cb1c131c94e6" name="Changes" comment="tests 16.11.24">
+    <list default="true" id="81372727-11cb-4878-b167-cb1c131c94e6" name="Changes" comment="update check_exceptions">
+      <change afterPath="$PROJECT_DIR$/set_config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checker_plus/parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/checker_plus/parser.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checker_plus/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/checker_plus/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/#general/shop_data.json" beforeDir="false" afterPath="$PROJECT_DIR$/db/#general/shop_data.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -328,7 +328,63 @@
       <option name="project" value="LOCAL" />
       <updated>1731776595496</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="update parser and utils">
+      <option name="closed" value="true" />
+      <created>1732608908600</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1732608908600</updated>
+    </task>
+    <task id="LOCAL-00009" summary="add cache_handler.py">
+      <option name="closed" value="true" />
+      <created>1732641700782</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1732641700782</updated>
+    </task>
+    <task id="LOCAL-00010" summary="add config files">
+      <option name="closed" value="true" />
+      <created>1732641716970</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1732641716970</updated>
+    </task>
+    <task id="LOCAL-00011" summary="update requirements.txt">
+      <option name="closed" value="true" />
+      <created>1732641730149</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1732641730149</updated>
+    </task>
+    <task id="LOCAL-00012" summary="add server.py">
+      <option name="closed" value="true" />
+      <created>1732641743303</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1732641743303</updated>
+    </task>
+    <task id="LOCAL-00013" summary="add save temporary checked data in csv file">
+      <option name="closed" value="true" />
+      <created>1732641807186</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1732641807186</updated>
+    </task>
+    <task id="LOCAL-00014" summary="update check_exceptions">
+      <option name="closed" value="true" />
+      <created>1732641931813</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1732641931813</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -358,6 +414,13 @@
     <MESSAGE value="drop" />
     <MESSAGE value="delete no use methods" />
     <MESSAGE value="tests 16.11.24" />
-    <option name="LAST_COMMIT_MESSAGE" value="tests 16.11.24" />
+    <MESSAGE value="update parser and utils" />
+    <MESSAGE value="add cache_handler.py" />
+    <MESSAGE value="add config files" />
+    <MESSAGE value="update requirements.txt" />
+    <MESSAGE value="add server.py" />
+    <MESSAGE value="add save temporary checked data in csv file" />
+    <MESSAGE value="update check_exceptions" />
+    <option name="LAST_COMMIT_MESSAGE" value="update check_exceptions" />
   </component>
 </project>
