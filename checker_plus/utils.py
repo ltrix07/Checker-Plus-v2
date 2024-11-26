@@ -18,6 +18,11 @@ def read_json(file_path):
 
 
 async def date_to_days(string_with_date: str) -> str:
+    """
+    Переводит дату, полученную с eBay в разницу дней начиная с сегодня.
+    :param string_with_date: Строка даты с сайта.
+    :return: Разницу дней.
+    """
     if string_with_date:
         now_year = datetime.now().year
         date_ebay = datetime.strptime(string_with_date + ' ' + str(now_year), '%a, %b %d %Y').date()
