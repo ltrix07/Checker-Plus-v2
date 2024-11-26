@@ -123,19 +123,19 @@ class EbayParser(Parser):
 
     async def check_exceptions(self):
         """
-        Проверяет исключения на странице.
-        :return: Str - исключение; None - исключений не найдено.
+        Проверяет исключения на странице. :return: Tuple - исключение [Статус исключения, Информационная строка для
+        занесения в файл с ошибками]; None - исключений не найдено.
         """
         if self.out_of_stock:
-            return "{out_of_stock}"
+            return "{out_of_stock}", None
         if self.catalog_link:
-            return "{link_on_catalog}"
+            return "{link_on_catalog}", "Ссылка на каталог товаров, а не на карточку товара."
         if self.proxy_ban:
             return "{proxy_ban}"
         if self.not_send_to_usa:
-            return "{supplier_not_in_usa}"
+            return "{supplier_not_in_usa}", "Поставщик не в США."
         if self.pick_up:
-            return "{pick_up_only}"
+            return "{pick_up_only}", "У поставщика только самовывоз."
 
     async def look_out_of_stock_triggers(self) -> None:
         """
