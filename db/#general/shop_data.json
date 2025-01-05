@@ -1,1 +1,68 @@
-[]
+[
+    {
+        "shop_name": "Cartier",
+        "table_link": [
+            "https://docs.google.com/spreadsheets/d/1idnwh3QKpHSc6g5juXW9UDFnoY4Bh6UzGxI5T-7T6OQ/edit",
+            "",
+            "",
+            "",
+            ""
+        ],
+        "worksheet": "INVENTORY",
+        "columns": {
+            "asin": "asin",
+            "sku": "sku",
+            "listing_link": "link",
+            "our_price": "price amazon",
+            "our_shipping": "shipping price",
+            "supplier_link": "supplier1",
+            "supplier_price": "price ebay",
+            "supplier_shipping": "shipping",
+            "supplier_qty": "stock",
+            "supplier_days": "shipping days",
+            "supplier_name": "supplier name",
+            "handling_time": "handling-time",
+            "merchant_shipping": "merchant_shipping_group_name",
+            "variation": "variation",
+            "part_number": "mpn",
+            "item_weight": "weight",
+            "product_dimensions": "dimensions",
+            "color": "color",
+            "unit_count": "unit count",
+            "material_type": "material type",
+            "power_source": "power source",
+            "voltage": "voltage",
+            "wattage": "wattage",
+            "included_components": "included components",
+            "speed": "speed",
+            "number_of_boxes": "number of boxes",
+            "title": "title",
+            "description": "description"
+        },
+        "supplier_marketplace": "ebay",
+        "qty_on_shop": 95,
+        "exceptions_sheet": "Exceptions",
+        "exceptions_sheet_repricer": "Exceptions for Repricer",
+        "what_need_to_parse": {
+            "supplier_price": true,
+            "supplier_shipping": true,
+            "supplier_qty": true,
+            "supplier_days": true,
+            "supplier_name": true,
+            "part_number": false,
+            "product_dimensions": false,
+            "color": false,
+            "power_source": false,
+            "voltage": false,
+            "wattage": false,
+            "included_components": false,
+            "title": false
+        },
+        "strategy": "drop",
+        "amz_creds": {
+            "lwa_app_id": "",
+            "lwa_client_secret": "amzn1.oa2-cs.v1.80f9e9ec27dbdfa375bafc2236de822c12ac234bdf37accfd06607dc89f84b74",
+            "refresh_token": "Atzr|IwEBIOZpQzj-rZMh036kvC6deZmDzVKxB_LYCTeh6uF5QgGbulH-EswX0kMwtdH_s76UxGvFX_Rj4xK50rQFrV12YZXpoK6GjdqTHLDeuXecXqESYG7kNuRYxzV10GN2cXolDKgDQQVjFat-Kj-aN8cQSe7yJXVlm1s8vin3fFKg_fzaJfoBTRm2GvJK382R_hsvCc8csubcevgXVRjD8ea6VqXvqn3p4na4-rJh4gX9XB1LjQ1xoPe8lcOeW8756Ne_Po0nIfOEvd0e9gzdVcAoXu2VP2UV9qyKXGspds4xlm_ttZ0DoRvmnBopDp2BPGp26BM"
+        }
+    }
+]

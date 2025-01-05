@@ -2,10 +2,10 @@ import logging
 import random
 import aiohttp
 import asyncio
-from cache_handler import CSV
-from typing import List, Dict, Literal, Any
+from checker_plus.cache_handler import CSV
 from checker_plus.utils import read_json, get_next_batch, retype
 from checker_plus.parser import EbayParser
+from typing import List, Dict, Literal, Any
 from aiohttp import BasicAuth
 from aiohttp import client_exceptions
 from pathlib import Path
@@ -45,16 +45,22 @@ class Checker:
             "errors": {
                 "unknown": 0,
                 "no_block_with_info": 0,
+                "request_errors": 0,
                 "proxy_errors": 0,
                 "time_out_errors": 0,
                 "server_close_connection": 0,
                 "site_close_connection": 0,
+                "website_close_connection": 0,
                 "400": 0,
                 "404": 0
             },
         }
 
-        self.headers_settings = {}
+        self.headers_settings = {
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Connection": "keep-alive",
+        }
 
         self.auth_proxies: List[dict] = []
         self.indices = indices
@@ -65,7 +71,7 @@ class Checker:
         Если файл есть, то читаем с него стандартные настройки заголовков.
         """
         try:
-            self.headers_settings = read_json(self.CURRENT_DIR.parent / "db" / "#general" / "headers_settings.json")
+            self.headers_settings.update(read_json(self.CURRENT_DIR.parent / "db" / "#general" / "headers_settings.json"))
         except FileNotFoundError:
             pass
 
@@ -86,61 +92,48 @@ class Checker:
 
             self.auth_proxies.append({"url": proxy_url, "auth": proxy_auth})
 
-    async def request(self, link: str, proxy: dict) -> str:
+    async def request(self, link: str, proxy: dict) -> str | None:
         """
         Производит запрос по ссылке для получения контекста страницы.
         :param link: Ссылка на товар.
         :param proxy: Прокси авторизованный через 'aiohttp.BasicAuth'.
-        :return: Наполнение страницы в виде строки либо строку с текстом ошибки.
+        :return: Наполнение страницы в виде строки либо словарь с ошибкой.
         """
-        async with aiohttp.ClientSession() as session:
+        timeout = aiohttp.ClientTimeout(total=30)
+        proxy_url = proxy.get("url") if proxy else None
+        proxy_auth = proxy.get("auth") if proxy else None
+
+        async with aiohttp.ClientSession(timeout=timeout) as session:
             try:
-                if not proxy:
-                    self.logger.warning("No proxy specified.")
-                    proxy_url = None
-                    proxy_auth = None
-                else:
-                    proxy_url = proxy["url"]
-                    proxy_auth = proxy["auth"]
                 async with session.get(
                         link, proxy=proxy_url, proxy_auth=proxy_auth, headers=self.headers_settings
                 ) as response:
                     if response.status == 200:
                         return await response.text()
-                    if response.status == 400:
-                        self.report["errors"]["400"] += 1
-                        return "{400_bad_request}"
-                    if response.status == 404:
+                    elif response.status == 403:
+                        self.logger.warning(f"403 Forbidden: Link={link}, Proxy={proxy}")
+                        self.report["errors"]["403"] += 1
+                        return f"403 Forbidden: {link}"
+                    elif response.status == 404:
                         self.report["errors"]["404"] += 1
-                        return "{404}"
-                    if response.status == 403:
-                        self.report["errors"]["site_close_connection"] += 1
-                        return "{website_close_connection}"
+                        return f"404 Not Found: {link}"
+                    elif 500 <= response.status < 600:
+                        self.logger.warning(f"Server error {response.status} for URL: {link}")
+                        self.report["errors"]["server_errors"] += 1
+                        return f"Server error {response.status}: {link}"
                     else:
+                        self.logger.error(f"Unexpected status {response.status} for URL: {link}")
                         self.report["errors"]["unknown"] += 1
-                        return "{unknown_error}"
-            except TimeoutError:
-                self.report["errors"]["time_out_errors"] += 1
-                return "{time_out_error}"
-            except client_exceptions.ClientProxyConnectionError:
-                self.report["errors"]["proxy_errors"] += 1
-                return "{proxy_error}"
-            except client_exceptions.ClientConnectorError:
-                self.report["errors"]["proxy_errors"] += 1
-                return "{proxy_error}"
-            except client_exceptions.ClientOSError:
-                self.report["errors"]["proxy_errors"] += 1
-                return "{proxy_error}"
-            except client_exceptions.ServerConnectionError:
-                await asyncio.sleep(5)
-                self.report["errors"]["server_close_connection"] += 1
-                return "{server_close_connection}"
-            except client_exceptions.ContentTypeError:
-                self.report["errors"]["400"] += 1
-                return "{400_bad_request}"
-            except client_exceptions.ClientResponseError:
-                self.report["errors"]["website_close_connection"] += 1
-                return "{website_close_connection}"
+                        return f"Unknown status {response.status}: {link}"
+            except (TimeoutError, client_exceptions.ClientProxyConnectionError, client_exceptions.ClientConnectorError,
+                    client_exceptions.ClientOSError) as e:
+                self.logger.error(f"Request error: {e}, Link={link}")
+                self.report["errors"]["request_errors"] += 1
+                return f"Request error: {str(e)}"
+            except Exception as e:
+                self.logger.error(f"Unhandled error: {e}, Link={link}")
+                self.report["errors"]["unknown"] += 1
+                return f"Unhandled error: {str(e)}"
 
     async def fetch(self, item_data: Dict[str, Any], proxy: dict) -> dict:
         """
@@ -150,12 +143,13 @@ class Checker:
         :return: Словарь в формате 'item_data' но с дополнительной информацией в ключе 'page'.
         """
         sku = item_data.get("sku")
-        if sku in self.exceptions or sku == '' or not sku:
+        link = item_data.get("supplier_link")
+        if sku in self.exceptions or sku == '' or not sku or link == '' or not link:
             item_data["page"] = None
             return item_data
-        link = item_data.get("supplier_link")
 
         item_data["page"] = await self.request(link, proxy)
+        
         return item_data
 
     async def get_pages(self, data: List[Dict[str, Any]], batch_size: int = 5) -> tuple[Dict[str, Any]]:
@@ -202,8 +196,7 @@ class EbayChecker(Checker):
         self.data: List[Dict[str, Any]] = data
         self.strategy: Literal["drop", "listings"] = shop_config.get("strategy")
         self.cache_path = cache_path
-        self.checked_file = CSV(cache_path, self.shop_config.get("columns"))
-        self.errors_file = CSV(errors_path, ["sku", "error_type"])
+        self.errors_file = CSV(errors_path, True)
 
     async def _update_report(self, old_data: tuple[float, float, int], new_data: tuple[float, float, int]):
         """
@@ -267,20 +260,23 @@ class EbayChecker(Checker):
 
         return parsed_data
 
-    async def parsing_page(self, item_data: Dict[str, Any]) -> Dict[str, Any]:
+    async def parsing_page(self, item_data: Dict[str, Any]) -> Dict[str, Any] | None:
         """
         На основе информации в словаре 'item_data' что является элементом списка с данными из таблицы,
         собирает данные со страницы.
         :param item_data: Объект строки с данными, в которой уже есть ключ 'page'.
         :return: Объект 'item_data' с новой информацией полученной со страницы.
         """
+        page = item_data.pop("page")
+        if not page:
+            return None
+
         old_price = retype(item_data.get("supplier_price"), float, 0.0)
         old_shipping_price = retype(item_data.get("supplier_shipping"), float, 0.0)
         old_quantity = retype(item_data.get("supplier_qty"), int, 0)
         if item_data["variation"] == "TURE":
             return item_data
 
-        page = item_data.pop("page")
         parser = EbayParser(page=page)
 
         await self._parsing_triggers(parser)
@@ -297,7 +293,8 @@ class EbayChecker(Checker):
                 "supplier_name": exception_trigger[0]
             })
             if exception_trigger[1]:
-                self.errors_file.append_to_file([{"sku": item_data["sku"], "error_type": exception_trigger[1]}])
+                self.errors_file.append_to_file([{"sku": item_data["sku"], "error_type": exception_trigger[1]}],
+                                                ["sku", "error_type"])
             await self._update_report((old_price, old_shipping_price, old_quantity), (0.0, 0.0, 0))
             return item_data
 
@@ -312,7 +309,7 @@ class EbayChecker(Checker):
         :return: None
         """
         self.logger.info("Start checking data")
-        temporary_csv = CSV(self.cache_path, self.shop_config.get("columns"))
+        temporary_csv = CSV(self.cache_path, True)
 
         while self.data:
             items_data = await self.get_pages(self.data, batch_size=batch_size)
@@ -320,7 +317,7 @@ class EbayChecker(Checker):
             for item_data in items_data:
                 actual_data = await self.parsing_page(item_data)
                 new_data.append(actual_data)
-            temporary_csv.append_to_file(new_data)
+            temporary_csv.append_to_file(new_data, self.shop_config.get("columns"))
 
     async def end_check(self):
         """

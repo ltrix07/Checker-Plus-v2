@@ -11,5 +11,5 @@
   "voltage": false,
   "wattage": false,
   "included_components": false,
-  "title": false,
+  "title": false
 }

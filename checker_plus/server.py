@@ -1,7 +1,9 @@
 import websockets
 import json
 import base64
+from typing import Literal
 from checker_plus.utils import read_json
+from checker_plus.api_proxy import SpaceProxy
 
 
 class ServerHandler:
@@ -17,9 +19,9 @@ class ServerHandler:
             await websocket.close()
         return response
 
-    async def get_proxies(self):
+    async def get_proxies(self, type_prox: str):
         data = {
-            'message_type': 'get_proxy_all_isp'
+            'message_type': f'get_proxy_all_{type_prox}'
         }
 
         return await self.websocket_handler(data)
@@ -73,3 +75,17 @@ class ServerHandler:
             }
 
         return await self.websocket_handler(message)
+
+
+async def collect_proxies(service_name: Literal['space_proxy', 'default'] = 'default',
+                          api_key: str | None = None,
+                          proxy_type: str | None = None):
+    if service_name == 'space_proxy' and api_key:
+        space_proxy = SpaceProxy(api_key)
+        response = space_proxy.get_proxy_list()
+        proxies_obj = response.get('results', {})
+        return [f"{proxy['username']}:{proxy['password']}@{proxy['ip']}:{proxy['port_http']}" for proxy in proxies_obj]
+    server = ServerHandler()
+    response = await server.get_proxies(proxy_type)
+    proxies_obj = response.get('data', {}).get('proxies', [])
+    return [f"{proxy['login']}:{proxy['password']}@{proxy['ip']}:{proxy['port_http']}" for proxy in proxies_obj]

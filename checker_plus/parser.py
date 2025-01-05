@@ -12,7 +12,7 @@ class Parser:
     def __init__(self, page: str):
         self.page = page
 
-    async def search(self, patterns: list, in_text=False) -> str | True | None:
+    async def search(self, patterns: list, in_text=False) -> str | bool | None:
         """
         Ищет паттерны внутри страницы при помощи регулярных выражений. Приоритетность от первого паттерна в списке
         до последнего. Если паттерна нет на странице, то ищет следующий.
@@ -70,7 +70,8 @@ class EbayParser(Parser):
     SUPPLIER_LAST_DELIVERY_DAY = [
         r'and "},{"_type":"TextSpan","text":"(.*?)"',
         r'Get it by\\s+(.*?)<',
-        r'Estimated on or before\\s+(.*?)<'
+        r'Estimated on or before\\s+(.*?)<',
+        r'Estimated between\\s+and\\s+(.*?)</span>'
     ]
     SUPPLIER_NAME = [
         r'class="vim x-sellercard-atf".*?"_ssn":"(.*?)",',
