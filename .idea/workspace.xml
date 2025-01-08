@@ -4,29 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="81372727-11cb-4878-b167-cb1c131c94e6" name="Changes" comment="add set_config.py">
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/checker_plus/api_proxy.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main_1.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/api_proxy/test_get_proxy_list.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/cache_handler/test_read.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/test_proxy.py" afterDir="false" />
+    <list default="true" id="81372727-11cb-4878-b167-cb1c131c94e6" name="Changes" comment="06.01.2025">
+      <change afterPath="$PROJECT_DIR$/checker_plus/amz_api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checker_plus/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/checker_plus/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/checker_plus/cache_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/checker_plus/cache_handler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checker_plus/checker.py" beforeDir="false" afterPath="$PROJECT_DIR$/checker_plus/checker.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checker_plus/parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/checker_plus/parser.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checker_plus/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/checker_plus/server.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/checker_plus/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/checker_plus/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/#general/credentials.json" beforeDir="false" afterPath="$PROJECT_DIR$/db/#general/credentials.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db/#general/shop_data.json" beforeDir="false" afterPath="$PROJECT_DIR$/db/#general/shop_data.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/#general/what_need_to_parse.json" beforeDir="false" afterPath="$PROJECT_DIR$/db/#general/what_need_to_parse.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/google_sheet_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/google_sheet_manager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/set_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/set_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/utils/test_date_to_days.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/utils/test_date_to_days.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/utils.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -198,6 +184,28 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="set_config" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Checker-Plus-v2" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/set_config.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="test_get_proxy_list" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="Checker-Plus-v2" />
       <option name="ENV_FILES" value="" />
@@ -242,21 +250,6 @@
       <option name="MODULE_MODE" value="false" />
       <option name="REDIRECT_INPUT" value="false" />
       <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for test_date_to_days.test_date_to_days" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="Checker-Plus-v2" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/utils" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_date_to_days.test_date_to_days&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
     <configuration name="Python tests for test_get_proxy_list.test_get_proxy_list" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
@@ -325,20 +318,20 @@
     <list>
       <item itemvalue="Python.test_get_proxy_list" />
       <item itemvalue="Python.test_proxy" />
+      <item itemvalue="Python.set_config" />
       <item itemvalue="Python.main" />
       <item itemvalue="Python tests.pytest parser" />
       <item itemvalue="Python tests.Python tests in test_read.py" />
       <item itemvalue="Python tests.Python tests for test_get_proxy_list.test_get_proxy_list" />
-      <item itemvalue="Python tests.Python tests for test_date_to_days.test_date_to_days" />
       <item itemvalue="Python tests.Python tests in test_proxy.py" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.main" />
+        <item itemvalue="Python.set_config" />
         <item itemvalue="Python tests.Python tests in test_read.py" />
         <item itemvalue="Python tests.Python tests for test_get_proxy_list.test_get_proxy_list" />
         <item itemvalue="Python tests.Python tests in test_proxy.py" />
-        <item itemvalue="Python tests.Python tests for test_date_to_days.test_date_to_days" />
       </list>
     </recent_temporary>
   </component>
@@ -486,7 +479,15 @@
       <option name="project" value="LOCAL" />
       <updated>1732646841887</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="06.01.2025">
+      <option name="closed" value="true" />
+      <created>1736121271801</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1736121271802</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -524,6 +525,7 @@
     <MESSAGE value="add save temporary checked data in csv file" />
     <MESSAGE value="update check_exceptions" />
     <MESSAGE value="add set_config.py" />
-    <option name="LAST_COMMIT_MESSAGE" value="add set_config.py" />
+    <MESSAGE value="06.01.2025" />
+    <option name="LAST_COMMIT_MESSAGE" value="06.01.2025" />
   </component>
 </project>

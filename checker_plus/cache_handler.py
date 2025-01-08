@@ -108,7 +108,7 @@ class TXT(FileHandler):
 
         return data_list
 
-    def append_to_file(self, data: List[Dict[str, Any]], col_map: dict | list):
+    def append_to_file(self, data: List[Dict[str, Any]], col_map: dict):
         if not self.file_exists():
             self.create_file(col_map)
 
@@ -118,9 +118,14 @@ class TXT(FileHandler):
         if not existing_columns:
             raise ValueError("The file does not contain any headers.")
 
+        file_to_data_map = {key: existing_columns.index(value) for key, value in col_map.items() if
+                            value in existing_columns}
+
         with open(self.path, 'a') as txt_file:
             for row_data in data:
                 if not row_data:
                     continue
-                row = [str(row_data.get(col, '')) for col in existing_columns]
+                row = [""] * len(existing_columns)
+                for key, index in file_to_data_map.items():
+                    row[index] = str(row_data.get(key, ''))
                 txt_file.write("\t".join(row) + "\n")

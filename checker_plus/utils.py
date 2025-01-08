@@ -90,5 +90,19 @@ def filter_dict(orig_dict: Dict[str, Any], keys: List[str], mode: Literal['remov
 def processing_qty(data: list, standard_qty: int):
     for i, row in enumerate(data):
         if row['supplier_qty']:
-            if int(row['supplier_qty']) >= 5:
+            if int(row['supplier_qty'].replace(',', '')) >= 5:
                 data[i]['supplier_qty'] = standard_qty
+
+
+def prepare_data_for_amz(input_data: List[Dict[str, Any]]):
+    new_data = []
+    for row_data in input_data:
+        row_data['product_id_type'] = 1
+        row_data['item_condition'] = 11
+        row_data['will_ship_internationally'] = 1
+        row_data['add_delete'] = 'a'
+
+        new_data.append(row_data)
+
+    return new_data
+

@@ -27,7 +27,7 @@ def get_choice(prompt, options):
 def collect_tables_url_from_main_sheet(shop_name: str):
     main_table_id = MAIN_SHEET_CONF.get('table_id')
     main_sheet_name = MAIN_SHEET_CONF.get('sheet_name')
-    sheet_manager = GoogleSheetManager()
+    sheet_manager = GoogleSheetManager('./db/#general/credentials.json')
     links = sheet_manager.get_sheet_data(
         spreadsheet_id=main_table_id,
         worksheet_name=main_sheet_name,
@@ -50,11 +50,6 @@ def add_shop():
 
             standard_columns = read_json('./db/#general/standard_columns.json')
             standard_need_to_parse = read_json('./db/#general/what_need_to_parse.json')
-
-            tables_link = collect_tables_url_from_main_sheet(shop_name)
-            if not tables_link:
-                print("No tables found for this shop.")
-                return
 
             print('Do you want to modify standard columns?')
             if get_choice('1. Yes\n2. No\n', {'1', '2'}) == '1':
@@ -87,7 +82,6 @@ def add_shop():
             shop_inf = read_json('./db/#general/shop_data.json')
             shop_inf.append({
                 'shop_name': shop_name,
-                'table_link': tables_link,
                 'worksheet': worksheet,
                 'columns': standard_columns,
                 'supplier_marketplace': supplier_marketplace,
