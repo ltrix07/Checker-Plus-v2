@@ -5,10 +5,22 @@ from checker_plus.utils import date_to_days
 
 
 class Parser:
+    """
+    Родительский клаас для парсинга страниц товаров.
+    :param page: Страница сайта в формате str.
+    """
     def __init__(self, page: str):
         self.page = page
 
     async def search(self, patterns: list, in_text=False) -> str | bool | None:
+        """
+        Ищет паттерны внутри страницы при помощи регулярных выражений. Приоритетность от первого паттерна в списке
+        до последнего. Если паттерна нет на странице, то ищет следующий.
+        :param patterns: Список из регулярных вырежаений.
+        :param in_text: Булевое значение если нужно просто проверить находится ли паттерн на странице, но не надо
+        возвращать текст.
+        :return: str - когда паттерн найден; True - наличие паттерна на странице; None - паттерн на странице не найден.
+        """
         for pattern in patterns:
             match = re.search(pattern, self.page, re.IGNORECASE | re.DOTALL)
             if match and not in_text:
@@ -18,6 +30,10 @@ class Parser:
 
 
 class EbayParser(Parser):
+    """
+    Класс для парсинга eBay страницы. Наследует класс 'Parser'.
+    :param page: Страница сайта в формате str.
+    """
     OUT_OFF_STOCK_TRIGGERS = [
         r'CURRENTLY SOLD OUT', r'We looked everywhere.', r'Looks like this page is missing.',
         r'The item you selected is unavailable', r'The item you selected has ended',
@@ -54,7 +70,8 @@ class EbayParser(Parser):
     SUPPLIER_LAST_DELIVERY_DAY = [
         r'and "},{"_type":"TextSpan","text":"(.*?)"',
         r'Get it by\\s+(.*?)<',
-        r'Estimated on or before\\s+(.*?)<'
+        r'Estimated on or before\\s+(.*?)<',
+        r'Estimated between\\s+and\\s+(.*?)</span>'
     ]
     SUPPLIER_NAME = [
         r'class="vim x-sellercard-atf".*?"_ssn":"(.*?)",',
@@ -105,29 +122,63 @@ class EbayParser(Parser):
         self.not_send_to_usa: bool = False
         self.pick_up: bool = False
 
+    async def check_exceptions(self):
+        """
+        Проверяет исключения на странице. :return: Tuple - исключение [Статус исключения, Информационная строка для
+        занесения в файл с ошибками]; None - исключений не найдено.
+        """
+        if self.out_of_stock:
+            return "{out_of_stock}", None
+        if self.catalog_link:
+            return "{link_on_catalog}", "Ссылка на каталог товаров, а не на карточку товара."
+        if self.proxy_ban:
+            return "{proxy_ban}"
+        if self.not_send_to_usa:
+            return "{supplier_not_in_usa}", "Поставщик не в США."
+        if self.pick_up:
+            return "{pick_up_only}", "У поставщика только самовывоз."
+
     async def look_out_of_stock_triggers(self) -> None:
+        """
+        Проверяет 'out of stock' триггеры. Т.е. те, при которых нужно всегда ставить кол-во 0.
+        :return: Меняет 'self.out_of_stock' на значение True.
+        """
         trigger = await self.search(self.OUT_OFF_STOCK_TRIGGERS, in_text=True)
         if trigger:
             self.out_of_stock = True
 
     async def look_variation_trigger(self) -> None:
+        """
+        Товар вариация или нет.
+        :return: Меняет 'self.variation' на значение True.
+        """
         trigger = await self.search(self.VARIATION_TRIGGERS, in_text=True)
         if trigger:
             self.variation = True
 
     async def look_catalog_trigger(self) -> None:
+        """
+        Ссылка на каталог или нет.
+        :return: Меняет 'self.catalog_link' на значение True.
+        """
         trigger = await self.search(self.CATALOG_TRIGGERS, in_text=True)
         if trigger:
             self.catalog_link = True
 
     async def look_not_shipping_to_usa_trigger(self, strategy: Literal["drop", "listings"]) -> None:
+        """
+        Проверяет работоспособность прокси, а так же ошибку когда поставщик не доставляет товар в США.
+        :param strategy: Стратегия магазина. Может принимать значения: drop, listings.
+        :return: Меняет значения переменных 'self.proxy_ban' и 'self.not_send_to_usa' на True в случае
+        отработки триггера.
+        """
         trigger = await self.search(self.NOT_SHIP_TO_USA_TRIGGERS)
         if trigger:
             lower_trigger = trigger.lower()
             if "united states" not in lower_trigger and "usa" not in lower_trigger:
-                self.proxy_ban = True  # means the site thinks we're not in the U.S.
+                self.proxy_ban = True  # сайт думает, что мы не в США.
             elif strategy == "drop" and ("united states" in lower_trigger or "usa" in lower_trigger):
-                self.not_send_to_usa = True  # the supplier does not ship to the U.S.
+                self.not_send_to_usa = True  # поставщик не отправляет в США.
 
     async def look_pick_up_trigger(self) -> None:
         trigger = await self.search(self.PICK_UP_TRIGGERS, in_text=True)

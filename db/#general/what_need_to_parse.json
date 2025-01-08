@@ -1,0 +1,15 @@
+{
+  "supplier_price": true,
+  "supplier_shipping": true,
+  "supplier_qty": true,
+  "supplier_days": true,
+  "supplier_name": true,
+  "part_number": false,
+  "product_dimensions": false,
+  "color": false,
+  "power_source": false,
+  "voltage": false,
+  "wattage": false,
+  "included_components": false,
+  "title": false
+}
