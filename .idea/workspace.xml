@@ -21,18 +21,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "ltrix07"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;ltrix07&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/ltrix07/Checker-Plus-v2.git",
-    "accountId": "7f396474-af3e-436a-8978-8ee6d4ae0361"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/ltrix07/Checker-Plus-v2.git&quot;,
+    &quot;accountId&quot;: &quot;7f396474-af3e-436a-8978-8ee6d4ae0361&quot;
   }
-}]]></component>
+}</component>
   <component name="ProblemsViewState">
     <option name="autoscrollToSource" value="true" />
   </component>
@@ -216,20 +216,20 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python tests.pytest parser" />
       <item itemvalue="Python tests.Python tests for test_define_columns_indices.test_define_columns_indices" />
       <item itemvalue="Python tests.Python tests for test_prepare_data.test_prepare_data" />
       <item itemvalue="Python tests.Python tests in test_data_proc.py" />
       <item itemvalue="Python tests.Python tests in test_define_columns_indices.py" />
       <item itemvalue="Python tests.Python tests in test_look_pick_up_trigger.py" />
+      <item itemvalue="Python tests.pytest parser" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for test_prepare_data.test_prepare_data" />
-        <item itemvalue="Python tests.Python tests in test_define_columns_indices.py" />
-        <item itemvalue="Python tests.Python tests for test_define_columns_indices.test_define_columns_indices" />
-        <item itemvalue="Python tests.Python tests in test_data_proc.py" />
         <item itemvalue="Python tests.Python tests in test_look_pick_up_trigger.py" />
+        <item itemvalue="Python tests.Python tests in test_define_columns_indices.py" />
+        <item itemvalue="Python tests.Python tests in test_data_proc.py" />
+        <item itemvalue="Python tests.Python tests for test_prepare_data.test_prepare_data" />
+        <item itemvalue="Python tests.Python tests for test_define_columns_indices.test_define_columns_indices" />
       </list>
     </recent_temporary>
   </component>
