@@ -100,6 +100,21 @@ def add_shop():
             continue
 
 
+def delete_shop():
+    while True:
+        try:
+            shop_name = input('Enter shop name: ')
+            shop_inf = read_json('./db/#general/shop_data.json')
+            for i, shop_data in enumerate(shop_inf):
+                if shop_name.strip().lower() == shop_data['shop_name'].strip().lower():
+                    del shop_inf[i]
+            write_json('./db/#general/shop_data.json', shop_inf)
+            print('Shop was deleted')
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            continue
+
+
 if __name__ == '__main__':
     print('1. Add shop\n'
           '2. Delete shop\n')
@@ -107,6 +122,6 @@ if __name__ == '__main__':
     if action == '1':
         add_shop()
     elif action == '2':
-        pass
+        delete_shop()
     else:
         print('Invalid command')
