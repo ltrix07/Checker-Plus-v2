@@ -1,6 +1,6 @@
 {
-  "supplier_link": "supplier",
-  "supplier_price": "supplier price",
+  "supplier_link": "supplier1",
+  "supplier_price": "price ebay",
   "supplier_shipping": "shipping",
   "supplier_qty": "stock",
   "supplier_days": "shipping days",
