@@ -77,7 +77,7 @@ class EbayParser(Parser):
         r'class="vim x-sellercard-atf".*?"_ssn":"(.*?)",',
         r'<div class=x-sellercard-atf__info__about-seller title="(.*?)">',
         r'<div class=x-sellercard-atf__info__about-seller title=(.*?)>',
-        r'class=x-sellercard-atf__info__about-seller></div>.*?<span class=ux-textspans>(.*?) ('
+        r'class=x-sellercard-atf__info__about-seller></div>.*?<span class=ux-textspans>(.*?) \('
     ]
     PART_NUMBER = [
         r'<span class=ux-textspans>MPN.*?<span class=ux-textspans>(.*?)</span>',
