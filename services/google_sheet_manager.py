@@ -32,20 +32,32 @@ class GoogleSheetManager:
         self.indices = column_indices
         return self._extract_data(data_rows, column_indices)
 
-    def update_sheet_data(self, spreadsheet_id, worksheet_name, data, columns_map):
-        try:
-            headers = self._fetch_sheet_data(spreadsheet_id, worksheet_name)[0]
-            column_indices = self.map_column_indices(headers, columns_map)
-            self._ensure_rows_exist(spreadsheet_id, worksheet_name, len(data) + 2)
+    def update_sheet_data(self, spreadsheet_id, worksheet_name, data, columns_map, max_retries=5, retry_delay=10):
+        retries = 0
+        while retries < max_retries:
+            try:
+                headers = self._fetch_sheet_data(spreadsheet_id, worksheet_name)[0]
+                column_indices = self.map_column_indices(headers, columns_map)
+                self._ensure_rows_exist(spreadsheet_id, worksheet_name, len(data) + 2)
 
-            updates = self._prepare_updates(worksheet_name, data, column_indices)
-            if updates:
-                self._batch_update_in_chunks(spreadsheet_id, updates, chunk_size=1000)
-                print("Data successfully updated")
-        except HttpError as error:
-            raise RuntimeError(f"Error updating data: {error}")
-        except ValueError as value_error:
-            print(value_error)
+                updates = self._prepare_updates(worksheet_name, data, column_indices)
+                if updates:
+                    self._batch_update_in_chunks(spreadsheet_id, updates, chunk_size=1000)
+                    print("Data successfully updated")
+                    return
+            except HttpError as error:
+                if error.resp.status == 429:
+                    retries += 1
+                    print(
+                        f"Rate limit exceeded. Retrying in {retry_delay} seconds... (Attempt {retries}/{max_retries})")
+                    time.sleep(retry_delay)
+                else:
+                    raise RuntimeError(f"Unhandled HTTP error: {error}") from error
+            except ValueError as value_error:
+                print(value_error)
+                break
+        else:
+            raise RuntimeError(f"Failed to update data after {max_retries} attempts due to rate limiting.")
 
     def _extract_data(self, data_rows, column_indices):
         return [
