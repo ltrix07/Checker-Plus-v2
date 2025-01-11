@@ -43,18 +43,14 @@ class GoogleSheetManager:
                 updates = self._prepare_updates(worksheet_name, data, column_indices)
                 if updates:
                     self._batch_update_in_chunks(spreadsheet_id, updates, chunk_size=1000)
-                    print("Data successfully updated")
-                    return
+                    return True
             except HttpError as error:
-                if error.resp.status == 429:
+                if error.resp.status in [429, 500, 503]:
                     retries += 1
-                    print(
-                        f"Rate limit exceeded. Retrying in {retry_delay} seconds... (Attempt {retries}/{max_retries})")
                     time.sleep(retry_delay)
                 else:
                     raise RuntimeError(f"Unhandled HTTP error: {error}") from error
-            except ValueError as value_error:
-                print(value_error)
+            except ValueError:
                 break
         else:
             raise RuntimeError(f"Failed to update data after {max_retries} attempts due to rate limiting.")
