@@ -1,8 +1,10 @@
 import os
 import time
-from google.oauth2.service_account import Credentials
+from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from google.auth.transport.requests import Request
+from google_auth_oauthlib.flow import InstalledAppFlow
 
 
 class GoogleSheetManager:
@@ -11,14 +13,22 @@ class GoogleSheetManager:
         self.indices = None
 
     def _authorize_google_sheets(self, creds_path):
-        if not os.path.exists(creds_path):
-            raise FileNotFoundError(f"Credentials file not found: {creds_path}")
-        try:
-            scopes = ['https://www.googleapis.com/auth/spreadsheets']
-            creds = Credentials.from_service_account_file(creds_path, scopes=scopes)
-            return build('sheets', 'v4', credentials=creds)
-        except Exception as e:
-            raise RuntimeError(f"Error authorizing Google Sheets: {e}")
+        creds = None
+        scopes = ['https://www.googleapis.com/auth/spreadsheets']
+
+        if os.path.exists('token.json'):
+            creds = Credentials.from_authorized_user_file('token.json', scopes)
+
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(creds_path, scopes)
+                creds = flow.run_local_server(port=0)
+            with open('token.json', 'w') as token:
+                token.write(creds.to_json())
+
+        return build('sheets', 'v4', credentials=creds)
 
     def get_sheet_data(self, spreadsheet_id, worksheet_name, columns_map):
         data = self._fetch_sheet_data(spreadsheet_id, worksheet_name)
@@ -116,7 +126,8 @@ class GoogleSheetManager:
         try:
             result = self.service.spreadsheets().values().get(
                 spreadsheetId=spreadsheet_id,
-                range=worksheet_name
+                range=worksheet_name,
+                valueRenderOption='UNFORMATTED_VALUE'
             ).execute()
             return result.get('values', [])
         except HttpError as error:

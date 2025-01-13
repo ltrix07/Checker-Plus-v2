@@ -12,7 +12,7 @@ from set_config import collect_tables_url_from_main_sheet
 START_ROW = 1
 TABLE_ROW_SIZE = 50000
 
-GOOGLE_CREDS_PH = os.path.join('db', '#general', 'credentials.json')
+GOOGLE_CREDS_PH = os.path.join('db', '#general', 'oAuth_creds.json')
 SHOP_DATA_PH = os.path.join('db', '#general', 'shop_data.json')
 USER_AGENTS_PH = os.path.join('db', '#general', 'user_agents.json')
 PROCESSING_PH = os.path.join('processing', 'process.csv')

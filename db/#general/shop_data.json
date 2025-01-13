@@ -1,1 +1,59 @@
-[]
+[
+    {
+        "shop_name": "Cartier",
+        "worksheet": "INVENTORY",
+        "columns": {
+            "asin": "asin",
+            "sku": "sku",
+            "listing_link": "link",
+            "our_price": "price amazon",
+            "our_shipping": "amazon shipping",
+            "supplier_link": "supplier1",
+            "supplier_price": "price ebay",
+            "supplier_shipping": "shipping",
+            "supplier_qty": "stock",
+            "supplier_days": "shipping days",
+            "supplier_name": "supplier name",
+            "variation": "variation",
+            "part_number": "mpn",
+            "item_weight": "weight",
+            "product_dimensions": "dimensions",
+            "color": "color",
+            "unit_count": "unit count",
+            "material_type": "material type",
+            "power_source": "power source",
+            "voltage": "voltage",
+            "wattage": "wattage",
+            "included_components": "included components",
+            "speed": "speed",
+            "number_of_boxes": "number of boxes",
+            "title": "title",
+            "description": "description"
+        },
+        "supplier_marketplace": "ebay",
+        "qty_on_shop": 13,
+        "exceptions_sheet": "Exceptions",
+        "exceptions_sheet_repricer": "Exceptions for Repricer",
+        "what_need_to_parse": {
+            "supplier_price": true,
+            "supplier_shipping": true,
+            "supplier_qty": true,
+            "supplier_days": true,
+            "supplier_name": true,
+            "part_number": false,
+            "product_dimensions": false,
+            "color": false,
+            "power_source": false,
+            "voltage": false,
+            "wattage": false,
+            "included_components": false,
+            "title": false
+        },
+        "strategy": "drop",
+        "amz_creds": {
+            "lwa_app_id": "",
+            "lwa_client_secret": "",
+            "refresh_token": ""
+        }
+    }
+]
