@@ -12,39 +12,23 @@ class GoogleSheetManager:
         self.service = self._authorize_google_sheets(creds_dir)
         self.indices = None
 
-    # def _authorize_google_sheets(self, creds_path):
-    #     creds = None
-    #     scopes = ['https://www.googleapis.com/auth/spreadsheets']
-
-    #     if os.path.exists('token.json'):
-    #         creds = Credentials.from_authorized_user_file('token.json', scopes)
-
-    #     if not creds or not creds.valid:
-    #         if creds and creds.expired and creds.refresh_token:
-    #             creds.refresh(Request())
-    #         else:
-    #             flow = InstalledAppFlow.from_client_secrets_file(creds_path, scopes)
-    #             creds = flow.run_local_server(port=0)
-    #         with open('token.json', 'w') as token:
-    #             token.write(creds.to_json())
-
-    #     return build('sheets', 'v4', credentials=creds)
-
-
     def _authorize_google_sheets(self, creds_path):
-        from google.oauth2.service_account import Credentials
-        from googleapiclient.discovery import build
-
-        # Define the scope
+        creds = None
         scopes = ['https://www.googleapis.com/auth/spreadsheets']
 
-        # Load credentials from the service account JSON file
-        creds = Credentials.from_service_account_file(creds_path, scopes=scopes)
+        if os.path.exists('token.json'):
+            creds = Credentials.from_authorized_user_file('token.json', scopes)
 
-        # Build the Sheets API service
-        service = build('sheets', 'v4', credentials=creds)
-        return service
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(creds_path, scopes)
+                creds = flow.run_local_server(port=0)
+            with open('token.json', 'w') as token:
+                token.write(creds.to_json())
 
+        return build('sheets', 'v4', credentials=creds)
 
     def get_sheet_data(self, spreadsheet_id, worksheet_name, columns_map):
         data = self._fetch_sheet_data(spreadsheet_id, worksheet_name)
