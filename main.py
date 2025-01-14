@@ -82,7 +82,7 @@ async def main():
                 await checker.start_check(batch_size=10)
                 await checker.end_check()
 
-                proc_file = CSV('processing/process.csv')
+                proc_file = CSV('processing/process.csv', True)
                 checked_data = proc_file.read()
 
                 columns_map_filtered = filter_dict(columns_map, ['our_price', 'our_shipping', 'handling_time', 'merchant_shipping'])
