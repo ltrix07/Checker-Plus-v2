@@ -48,7 +48,7 @@ class CSV(FileHandler):
             for row in reader:
                 formatted_row = {
                     key: int(value) if value.isdigit() else float(value) if value.replace('.', '', 1).isdigit() else value
-                    for key, value in row.items()
+                    for key, value in row.items() if key
                 }
                 data_list.append(formatted_row)
         return data_list
@@ -76,6 +76,15 @@ class CSV(FileHandler):
                 row = [row_data.get(col, '') for col in existing_columns]
                 writer.writerow(row)
         self.logger.info(f"Data added to the file: {self.path}")
+
+    def clear(self):
+        with open(self.path, 'r', newline='') as csvfile:
+            reader = csv.DictReader(csvfile)
+            fieldnames = reader.fieldnames
+
+        with open(self.path, 'w', newline='') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
 
 
 class TXT(FileHandler):

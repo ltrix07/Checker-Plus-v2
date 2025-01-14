@@ -85,7 +85,7 @@ async def main():
                 proc_file = CSV('processing/process.csv')
                 checked_data = proc_file.read()
 
-                columns_map_filtered = filter_dict(columns_map, ['our_price', 'handling_time', 'merchant_shipping'])
+                columns_map_filtered = filter_dict(columns_map, ['our_price', 'our_shipping', 'handling_time', 'merchant_shipping'])
                 sheet_manager.update_sheet_data(
                     spreadsheet_id=table_id,
                     worksheet_name=main_worksheet,
