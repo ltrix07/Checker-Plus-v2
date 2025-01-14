@@ -12,23 +12,39 @@ class GoogleSheetManager:
         self.service = self._authorize_google_sheets(creds_dir)
         self.indices = None
 
+    # def _authorize_google_sheets(self, creds_path):
+    #     creds = None
+    #     scopes = ['https://www.googleapis.com/auth/spreadsheets']
+
+    #     if os.path.exists('token.json'):
+    #         creds = Credentials.from_authorized_user_file('token.json', scopes)
+
+    #     if not creds or not creds.valid:
+    #         if creds and creds.expired and creds.refresh_token:
+    #             creds.refresh(Request())
+    #         else:
+    #             flow = InstalledAppFlow.from_client_secrets_file(creds_path, scopes)
+    #             creds = flow.run_local_server(port=0)
+    #         with open('token.json', 'w') as token:
+    #             token.write(creds.to_json())
+
+    #     return build('sheets', 'v4', credentials=creds)
+
+
     def _authorize_google_sheets(self, creds_path):
-        creds = None
+        from google.oauth2.service_account import Credentials
+        from googleapiclient.discovery import build
+
+        # Define the scope
         scopes = ['https://www.googleapis.com/auth/spreadsheets']
 
-        if os.path.exists('token.json'):
-            creds = Credentials.from_authorized_user_file('token.json', scopes)
+        # Load credentials from the service account JSON file
+        creds = Credentials.from_service_account_file(creds_path, scopes=scopes)
 
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file(creds_path, scopes)
-                creds = flow.run_local_server(port=0)
-            with open('token.json', 'w') as token:
-                token.write(creds.to_json())
+        # Build the Sheets API service
+        service = build('sheets', 'v4', credentials=creds)
+        return service
 
-        return build('sheets', 'v4', credentials=creds)
 
     def get_sheet_data(self, spreadsheet_id, worksheet_name, columns_map):
         data = self._fetch_sheet_data(spreadsheet_id, worksheet_name)
@@ -193,3 +209,41 @@ class GoogleSheetManager:
             self.service.spreadsheets().batchUpdate(spreadsheetId=spreadsheet_id, body=body).execute()
         except HttpError as error:
             raise RuntimeError(f"Error adding rows: {error}")
+        
+    def update_sheet_data_by_sku(self, spreadsheet_id, worksheet_name, data, sku_column, columns_map):
+        sheet_data = self._fetch_sheet_data(spreadsheet_id, worksheet_name)
+        if not sheet_data:
+            raise ValueError(f"No data found in the sheet '{worksheet_name}'")
+
+        headers = sheet_data[0]
+        if sku_column not in headers:
+            raise ValueError(f"SKU column '{sku_column}' not found in the sheet headers")
+
+        sku_index = headers.index(sku_column)
+        column_indices = self.map_column_indices(headers, columns_map)
+        sku_list = [row['SKU'] for row in data if 'SKU' in row]
+
+        data_rows = sheet_data[1:]
+        row_map = {
+            row[sku_index]: idx + 2
+            for idx, row in enumerate(data_rows)
+            if len(row) > sku_index and row[sku_index] in sku_list
+        }
+        updates = []
+        for row_data in data:
+            sku = row_data.get('SKU')
+            if sku in row_map:  
+                row_index = row_map[sku]
+                for key, value in row_data.items():
+                    if key in column_indices:
+                        col_letter = self._get_column_letter(column_indices[key])
+                        range_str = f'{worksheet_name}!{col_letter}{row_index}'
+                        updates.append({'range': range_str, 'values': [[value]]})
+
+        if updates:
+            self._batch_update_in_chunks(spreadsheet_id, updates)
+            print(f"Updated {len(updates)} cells in {worksheet_name}.")
+            return True
+        else:
+            print("No updates were made because no matching SKU was found.")
+            return False
