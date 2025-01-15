@@ -190,13 +190,13 @@ class EbayChecker(Checker):
     Остальные параметры имеют аналогичное значение, как и в родительском классе Checker.
     """
     def __init__(self, data: List[Dict[str, Any]], indices: Dict[str, int], proxies: list, user_agents: list,
-                 shop_config: dict, exceptions: list, exceptions_repricer: list, cache_path: str, errors_path: str):
+                 shop_config: dict, exceptions: list, exceptions_repricer: list, cache_path: CSV, errors_path: CSV):
         super().__init__(indices=indices, proxies=proxies, user_agents=user_agents,
                          shop_config=shop_config, exceptions=exceptions, exceptions_repricer=exceptions_repricer)
         self.data: List[Dict[str, Any]] = data
         self.strategy: Literal["drop", "listings"] = shop_config.get("strategy")
         self.cache_path = cache_path
-        self.errors_file = CSV(errors_path, True)
+        self.errors_file = errors_path
 
     async def _update_report(self, old_data: tuple[float, float, int], new_data: tuple[float, float, int]):
         """
@@ -309,7 +309,6 @@ class EbayChecker(Checker):
         :return: None
         """
         self.logger.info("Start checking data")
-        temporary_csv = CSV(self.cache_path, True)
 
         while self.data:
             items_data = await self.get_pages(self.data, batch_size=batch_size)
@@ -317,7 +316,7 @@ class EbayChecker(Checker):
             for item_data in items_data:
                 actual_data = await self.parsing_page(item_data)
                 new_data.append(actual_data)
-            temporary_csv.append_to_file(new_data, self.shop_config.get("columns"))
+            self.cache_path.append_to_file(new_data, self.shop_config.get("columns"))
 
     async def end_check(self):
         """

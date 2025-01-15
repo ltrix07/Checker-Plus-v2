@@ -90,7 +90,7 @@ def filter_dict(orig_dict: Dict[str, Any], keys: List[str], mode: Literal['remov
 def processing_qty(data: list, standard_qty: int):
     for i, row in enumerate(data):
         if row['supplier_qty']:
-            if int(row['supplier_qty'].replace(',', '')) >= 5:
+            if int(str(row['supplier_qty']).replace(',', '')) >= 5:
                 data[i]['supplier_qty'] = standard_qty
 
 

@@ -31,7 +31,7 @@
             "description": "description"
         },
         "supplier_marketplace": "ebay",
-        "qty_on_shop": 13,
+        "qty_on_shop": 95,
         "exceptions_sheet": "Exceptions",
         "exceptions_sheet_repricer": "Exceptions for Repricer",
         "what_need_to_parse": {
@@ -51,9 +51,9 @@
         },
         "strategy": "drop",
         "amz_creds": {
-            "lwa_app_id": "",
-            "lwa_client_secret": "",
-            "refresh_token": ""
+            "lwa_app_id": "amzn1.application-oa2-client.7761f49a48034c1baf00c80093f9c87f",
+            "lwa_client_secret": "amzn1.oa2-cs.v1.80f9e9ec27dbdfa375bafc2236de822c12ac234bdf37accfd06607dc89f84b74",
+            "refresh_token": "Atzr|IwEBIAor79Nf6uOig6qrNo7VEGPc6tQi0GADuLzKHPvzokkNeSCNTCMbTuAUH7DPsXOY-Y9o5pSawLKnRGwobHxBrQLdzZuT79iAsvdwQb9lu8ZZMZ-BPY6jwLdYRx5rqTnX5wRSt9ln9bSucGmTDfOlnhVP6u_VflRuYtwy5Js54OPLebzZ9fT2tel2Um-99Qr5I-HI9C-MtD7tOD7MEofWUJFtRp5dxNMwk8f4UqBHvC3k0tJs9ngSf9W0G13dRyGfYE08hIamWZC7YzEOJImtF9cCULAJgj_axfrJFdZylYJAgMZnILdpohH7O4tFFP1rcQg"
         }
     }
 ]

@@ -31,6 +31,7 @@ async def main():
             shop_name = shop_info.get('shop_name')
             main_worksheet = shop_info.get('worksheet')
             columns_map = shop_info.get('columns')
+            supplier_marketplace = shop_info.get('supplier_marketplace')
             exceptions_sheet_name = shop_info.get('exceptions_sheet')
             exceptions_repricer_sheet_name = shop_info.get('exceptions_sheet_repricer')
             standard_qty = shop_info.get('qty_on_shop')
@@ -45,6 +46,9 @@ async def main():
                 print(f'Checking table with data {START_ROW} - {TABLE_ROW_SIZE}')
                 if not table_link:
                     continue
+
+                proc_file = CSV(PROCESSING_PH, True)
+                errors_file = CSV(ERRORS_PH, True)
 
                 table_id = get_id_from_link(table_link)
 
@@ -67,22 +71,26 @@ async def main():
                 proxies = await collect_proxies('space_proxy',
                                                 '9A1TISnmV0UmHTwQ0af5sY8GOKDgwJiMeJXD4cAR')
                 user_agents_list = read_json(USER_AGENTS_PH)
-                checker = EbayChecker(
-                    data=inventory_data,
-                    indices=sheet_manager.indices,
-                    proxies=proxies,
-                    user_agents=user_agents_list,
-                    shop_config=shop_info,
-                    exceptions=exceptions_data,
-                    exceptions_repricer=exceptions_repricer_data,
-                    cache_path=PROCESSING_PH,
-                    errors_path=ERRORS_PH
-                )
+
+                if supplier_marketplace == 'ebay':
+                    checker = EbayChecker(
+                        data=inventory_data,
+                        indices=sheet_manager.indices,
+                        proxies=proxies,
+                        user_agents=user_agents_list,
+                        shop_config=shop_info,
+                        exceptions=exceptions_data,
+                        exceptions_repricer=exceptions_repricer_data,
+                        cache_path=proc_file,
+                        errors_path=errors_file
+                    )
+                else:
+                    print('You specified wrong supplier marketplace')
+                    continue
 
                 await checker.start_check(batch_size=10)
                 await checker.end_check()
 
-                proc_file = CSV('processing/process.csv', True)
                 checked_data = proc_file.read()
 
                 columns_map_filtered = filter_dict(columns_map, ['our_price', 'our_shipping', 'handling_time', 'merchant_shipping'])
@@ -130,6 +138,7 @@ async def main():
                 end_time = time.time()
 
                 total_time = (end_time - start_time) / 60 / 60
+                print(status)
                 print(total_time)
 
                 START_ROW += TABLE_ROW_SIZE
