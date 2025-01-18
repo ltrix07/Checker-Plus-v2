@@ -43,12 +43,14 @@ async def main():
 
             for table_link in table_id_list:
                 start_time = time.time()
-                print(f'Checking table with data {START_ROW} - {TABLE_ROW_SIZE}')
                 if not table_link:
                     continue
+                print(f'Checking table with data {START_ROW} - {TABLE_ROW_SIZE}')
 
                 proc_file = CSV(PROCESSING_PH, True)
                 errors_file = CSV(ERRORS_PH, True)
+                proc_file.create_file(columns_map)
+                errors_file.create_file(["sku", "error_type"])
 
                 table_id = get_id_from_link(table_link)
 
@@ -75,7 +77,6 @@ async def main():
                 if supplier_marketplace == 'ebay':
                     checker = EbayChecker(
                         data=inventory_data,
-                        indices=sheet_manager.indices,
                         proxies=proxies,
                         user_agents=user_agents_list,
                         shop_config=shop_info,
@@ -93,12 +94,14 @@ async def main():
 
                 checked_data = proc_file.read()
 
-                columns_map_filtered = filter_dict(columns_map, ['our_price', 'our_shipping', 'handling_time', 'merchant_shipping'])
-                sheet_manager.update_sheet_data(
+                columns_map_filtered = filter_dict(columns_map, ['our_price', 'our_shipping', 'handling_time',
+                                                                 'merchant_shipping'])
+                sheet_manager.update_sheet_data_by_sku(
                     spreadsheet_id=table_id,
                     worksheet_name=main_worksheet,
                     data=checked_data,
-                    columns_map=columns_map_filtered
+                    columns_map=columns_map_filtered,
+                    sku_column=columns_map['sku']
                 )
 
                 columns_map_filtered = filter_dict(columns_map,
@@ -111,27 +114,20 @@ async def main():
                     columns_map=columns_map_filtered
                 )
                 processing_qty(updated_data, standard_qty)
-                prepared_data = prepare_data_for_amz(updated_data)
 
-                columns_to_amz = ['sku', 'product-id', 'product-id-type', 'price', 'item-condition',
-                                  'quantity', 'will-ship-internationally', 'handling-time',
-                                  'merchant_shipping_group_name', 'add-delete']
+                columns_to_amz = ['sku', 'price', 'quantity', 'handling-time',
+                                  'merchant_shipping_group_name']
                 to_amz_file = TXT('./uploads/upload.txt', True)
                 to_amz_file.create_file(columns_to_amz)
 
                 columns_map_amz = {
                     'sku': 'sku',
-                    'asin': 'product-id',
                     'our_price': 'price',
                     'supplier_qty': 'quantity',
                     'handling_time': 'handling-time',
-                    'merchant_shipping': 'merchant_shipping_group_name',
-                    'product_id_type': 'product-id-type',
-                    'item_condition': 'item-condition',
-                    'will_ship_internationally': 'will-ship-internationally',
-                    'add_delete': 'add-delete'
+                    'merchant_shipping': 'merchant_shipping_group_name'
                 }
-                to_amz_file.append_to_file(prepared_data, columns_map_amz)
+                to_amz_file.append_to_file(updated_data, columns_map_amz)
 
                 amz_api = AmazonAPI(amz_creds)
                 status = amz_api.upload_to_amz('./uploads/upload.txt')

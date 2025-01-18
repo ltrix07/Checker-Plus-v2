@@ -30,19 +30,33 @@ class GoogleSheetManager:
 
         return build('sheets', 'v4', credentials=creds)
 
-    def get_sheet_data(self, spreadsheet_id, worksheet_name, columns_map):
-        data = self._fetch_sheet_data(spreadsheet_id, worksheet_name)
-        if not data:
-            raise ValueError(f"No data found in the sheet '{worksheet_name}'")
+    def get_sheet_data(self, spreadsheet_id, worksheet_name, columns_map, max_retries=10, retry_delay=60):
+        retries = 0
+        while retries < max_retries:
+            try:
+                data = self._fetch_sheet_data(spreadsheet_id, worksheet_name)
+                if not data:
+                    raise ValueError(f"No data found in the sheet '{worksheet_name}'")
 
-        headers, data_rows = data[0], data[1:]
+                headers, data_rows = data[0], data[1:]
 
-        column_indices = self.map_column_indices(headers, columns_map)
+                column_indices = self.map_column_indices(headers, columns_map)
 
-        self.indices = column_indices
-        return self._extract_data(data_rows, column_indices)
+                self.indices = column_indices
+                return self._extract_data(data_rows, column_indices)
+            except HttpError as error:
+                if error.resp.status in [429, 500, 503]:
+                    retries += 1
+                    time.sleep(retry_delay)
+                else:
+                    raise RuntimeError(f"Unhandled HTTP error: {error}") from error
+            except TimeoutError:
+                retries += 1
+                time.sleep(retry_delay)
+        else:
+            raise RuntimeError(f"Failed to update data after {max_retries} attempts due to rate limiting.")
 
-    def update_sheet_data(self, spreadsheet_id, worksheet_name, data, columns_map, max_retries=5, retry_delay=10):
+    def update_sheet_data(self, spreadsheet_id, worksheet_name, data, columns_map, max_retries=10, retry_delay=60):
         retries = 0
         while retries < max_retries:
             try:
@@ -194,40 +208,48 @@ class GoogleSheetManager:
         except HttpError as error:
             raise RuntimeError(f"Error adding rows: {error}")
         
-    def update_sheet_data_by_sku(self, spreadsheet_id, worksheet_name, data, sku_column, columns_map):
-        sheet_data = self._fetch_sheet_data(spreadsheet_id, worksheet_name)
-        if not sheet_data:
-            raise ValueError(f"No data found in the sheet '{worksheet_name}'")
+    def update_sheet_data_by_sku(self, spreadsheet_id, worksheet_name, data, sku_column, columns_map, max_retries=10, retry_delay=60):
+        retries = 0
+        while retries < max_retries:
+            try:
+                sheet_data = self._fetch_sheet_data(spreadsheet_id, worksheet_name)
+                if not sheet_data:
+                    raise ValueError(f"No data found in the sheet '{worksheet_name}'")
 
-        headers = sheet_data[0]
-        if sku_column not in headers:
-            raise ValueError(f"SKU column '{sku_column}' not found in the sheet headers")
+                headers = sheet_data[0]
+                if sku_column not in headers:
+                    raise ValueError(f"SKU column '{sku_column}' not found in the sheet headers")
 
-        sku_index = headers.index(sku_column)
-        column_indices = self.map_column_indices(headers, columns_map)
-        sku_list = [row['SKU'] for row in data if 'SKU' in row]
+                sku_index = headers.index(sku_column)
+                column_indices = self.map_column_indices(headers, columns_map)
+                sku_list = [row[sku_column] for row in data if sku_column in row]
 
-        data_rows = sheet_data[1:]
-        row_map = {
-            row[sku_index]: idx + 2
-            for idx, row in enumerate(data_rows)
-            if len(row) > sku_index and row[sku_index] in sku_list
-        }
-        updates = []
-        for row_data in data:
-            sku = row_data.get('SKU')
-            if sku in row_map:  
-                row_index = row_map[sku]
-                for key, value in row_data.items():
-                    if key in column_indices:
-                        col_letter = self._get_column_letter(column_indices[key])
-                        range_str = f'{worksheet_name}!{col_letter}{row_index}'
-                        updates.append({'range': range_str, 'values': [[value]]})
+                data_rows = sheet_data[1:]
+                row_map = {
+                    row[sku_index]: idx + 2
+                    for idx, row in enumerate(data_rows)
+                    if len(row) > sku_index and row[sku_index] in sku_list
+                }
+                updates = []
+                for row_data in data:
+                    sku = row_data.get(sku_column)
+                    if sku in row_map:
+                        row_index = row_map[sku]
+                        for key, value in row_data.items():
+                            if key in column_indices:
+                                col_letter = self._get_column_letter(column_indices[key])
+                                range_str = f'{worksheet_name}!{col_letter}{row_index}'
+                                updates.append({'range': range_str, 'values': [[value]]})
 
-        if updates:
-            self._batch_update_in_chunks(spreadsheet_id, updates)
-            print(f"Updated {len(updates)} cells in {worksheet_name}.")
-            return True
+                if updates:
+                    self._batch_update_in_chunks(spreadsheet_id, updates)
+                    print(f"Updated {len(updates)} cells in {worksheet_name}.")
+                    return True
+                else:
+                    print("No updates were made because no matching SKU was found.")
+                    return False
+            except TimeoutError:
+                retries += 1
+                time.sleep(retry_delay)
         else:
-            print("No updates were made because no matching SKU was found.")
-            return False
+            raise RuntimeError(f"Failed to update data after {max_retries} attempts due to rate limiting.")

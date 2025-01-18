@@ -3,5 +3,7 @@
   "sku": "sku",
   "listing_link": "link",
   "our_price": "price amazon",
-  "our_shipping": "amazon shipping"
+  "our_shipping": "amazon shipping",
+  "handling_time": "handling-time",
+  "merchant_shipping": "merchant_shipping_group_name"
 }
