@@ -93,7 +93,7 @@ class GoogleSheetManager:
             chunk = updates[i:i + chunk_size]
             try:
                 self._batch_update(spreadsheet_id, chunk)
-                time.sleep(0.5)
+                time.sleep(2)
             except HttpError as error:
                 if error.resp.status == 429:
                     print("Rate limit exceeded. Retrying...")
