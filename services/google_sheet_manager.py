@@ -1,10 +1,8 @@
 import os
 import time
-from google.oauth2.credentials import Credentials
+from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from google.auth.transport.requests import Request
-from google_auth_oauthlib.flow import InstalledAppFlow
 
 
 class GoogleSheetManager:
@@ -12,23 +10,14 @@ class GoogleSheetManager:
         self.service = self._authorize_google_sheets(creds_dir)
         self.indices = None
 
-    def _authorize_google_sheets(self, creds_path):
-        creds = None
+    def _authorize_google_sheets(self, service_account_file):
         scopes = ['https://www.googleapis.com/auth/spreadsheets']
 
-        if os.path.exists('token.json'):
-            creds = Credentials.from_authorized_user_file('token.json', scopes)
+        creds = Credentials.from_service_account_file(service_account_file, scopes=scopes)
 
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file(creds_path, scopes)
-                creds = flow.run_local_server(port=0)
-            with open('token.json', 'w') as token:
-                token.write(creds.to_json())
+        service = build('sheets', 'v4', credentials=creds)
 
-        return build('sheets', 'v4', credentials=creds)
+        return service
 
     def get_sheet_data(self, spreadsheet_id, worksheet_name, columns_map, max_retries=10, retry_delay=60):
         retries = 0
