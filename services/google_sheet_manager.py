@@ -11,7 +11,7 @@ class GoogleSheetManager:
         self.indices = None
 
     def _authorize_google_sheets(self, service_account_file):
-        scopes = ['https://www.googleapis.com/auth/spreadsheets/edit']
+        scopes = ['https://www.googleapis.com/auth/spreadsheets/']
 
         creds = Credentials.from_service_account_file(service_account_file, scopes=scopes)
 
