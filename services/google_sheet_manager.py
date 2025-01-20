@@ -1,6 +1,5 @@
-import os
 import time
-from google.oauth2.credentials import Credentials
+from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
@@ -11,9 +10,9 @@ class GoogleSheetManager:
         self.indices = None
 
     def _authorize_google_sheets(self, service_account_file):
-        scopes = ['https://www.googleapis.com/auth/spreadsheets/']
+        scopes = ['https://www.googleapis.com/auth/spreadsheets']
 
-        creds = Credentials.from_authorized_user_file(service_account_file, scopes=scopes)
+        creds = Credentials.from_service_account_file(service_account_file, scopes=scopes)
 
         service = build('sheets', 'v4', credentials=creds)
 
