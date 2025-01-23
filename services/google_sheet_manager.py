@@ -76,19 +76,28 @@ class GoogleSheetManager:
             for row in data_rows
         ]
 
-    def _batch_update_in_chunks(self, spreadsheet_id, updates, chunk_size=1000):
+    def _batch_update_in_chunks(self, spreadsheet_id, updates, chunk_size=1000, max_retries=15, initial_delay=2):
         for i in range(0, len(updates), chunk_size):
             chunk = updates[i:i + chunk_size]
-            try:
-                self._batch_update(spreadsheet_id, chunk)
-                time.sleep(2)
-            except HttpError as error:
-                if error.resp.status == 429:
-                    print("Rate limit exceeded. Retrying...")
-                    time.sleep(10)
+            retries = 0
+            delay = initial_delay
+
+            while retries < max_retries:
+                try:
                     self._batch_update(spreadsheet_id, chunk)
-                else:
-                    raise RuntimeError(f"Error performing batch update: {error}")
+                    time.sleep(2)
+                    break
+                except HttpError as error:
+                    if error.resp.status in [429, 503]:
+                        retries += 1
+                        print(
+                            f"Ошибка {error.resp.status}: {error.reason}. Попытка {retries}/{max_retries}. Повтор через {delay} сек...")
+                        time.sleep(delay)
+                        delay *= 2
+                    else:
+                        raise RuntimeError(f"Ошибка выполнения batch update: {error}")
+            else:
+                raise RuntimeError(f"Превышено количество попыток для чанка: {chunk}")
 
     def _batch_update(self, spreadsheet_id, updates):
         body = {
