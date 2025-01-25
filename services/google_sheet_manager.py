@@ -134,15 +134,12 @@ class GoogleSheetManager:
         return letter
 
     def _fetch_sheet_data(self, spreadsheet_id, worksheet_name):
-        try:
-            result = self.service.spreadsheets().values().get(
-                spreadsheetId=spreadsheet_id,
-                range=worksheet_name,
-                valueRenderOption='UNFORMATTED_VALUE'
-            ).execute()
-            return result.get('values', [])
-        except HttpError as error:
-            raise RuntimeError(f"Error fetching data for range {worksheet_name}: {error}")
+        result = self.service.spreadsheets().values().get(
+            spreadsheetId=spreadsheet_id,
+            range=worksheet_name,
+            valueRenderOption='UNFORMATTED_VALUE'
+        ).execute()
+        return result.get('values', [])
 
     def map_column_indices(self, headers, columns_map):
         if not headers:
