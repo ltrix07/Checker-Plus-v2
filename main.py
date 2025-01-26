@@ -3,11 +3,13 @@ import asyncio
 import time
 from services.google_sheet_manager import GoogleSheetManager
 from checker_plus.checker import EbayChecker
-from checker_plus.utils import read_json, get_id_from_link, filter_dict, processing_qty, prepare_data_for_amz
+from checker_plus.utils import read_json, get_id_from_link, filter_dict
 from checker_plus.server import collect_proxies
-from checker_plus.cache_handler import CSV, TXT
-from checker_plus.amz_api import AmazonAPI
+from checker_plus.cache_handler import CSV
+from services.prepare_json import split_and_write_json, generate_json
+from services.amazon_manager import get_shipping_ids, get_access_token, process_file
 from set_config import collect_tables_url_from_main_sheet
+from db.config import MARKETPLACES
 
 START_ROW = 1
 TABLE_ROW_SIZE = 50000
@@ -29,6 +31,7 @@ async def main():
     while True:
         for shop_info in config:
             shop_name = shop_info.get('shop_name')
+            seller_id = shop_info.get('seller_id')
             main_worksheet = shop_info.get('worksheet')
             columns_map = shop_info.get('columns')
             supplier_marketplace = shop_info.get('supplier_marketplace')
@@ -113,28 +116,28 @@ async def main():
                     worksheet_name=main_worksheet,
                     columns_map=columns_map_filtered
                 )
-                processing_qty(updated_data, standard_qty)
 
-                columns_to_amz = ['sku', 'price', 'quantity', 'handling-time',
-                                  'merchant_shipping_group_name']
-                to_amz_file = TXT('./uploads/upload.txt', True)
-                to_amz_file.create_file(columns_to_amz)
+                access_token = get_access_token(
+                    amz_creds.get('lwa_app_id'),
+                    amz_creds.get('lwa_client_secret'),
+                    amz_creds.get('refresh_token')
+                )
+                enum_mapping = get_shipping_ids(access_token, seller_id)
+                messages = generate_json(updated_data, enum_mapping, standard_qty)
+                split_and_write_json(messages, shop_name, seller_id)
 
-                columns_map_amz = {
-                    'sku': 'sku',
-                    'our_price': 'price',
-                    'supplier_qty': 'quantity',
-                    'handling_time': 'handling-time',
-                    'merchant_shipping': 'merchant_shipping_group_name'
-                }
-                to_amz_file.append_to_file(updated_data, columns_map_amz)
+                file_count = len([f for f in os.listdir('.\\uploads')
+                                  if f.startswith(shop_name) and f.endswith(".json")])
+                json_file_paths = [os.path.join('.\\uploads', f"{shop_name}_{i}.json") for i in
+                                   range(file_count, 0, -1)]
+                for json_file_path in json_file_paths:
+                    process_file(json_file_path, MARKETPLACES, amz_creds)
+                    print(f"Файл {json_file_path} загружен")
+                    time.sleep(300)
 
-                amz_api = AmazonAPI(amz_creds)
-                status = amz_api.upload_to_amz('./uploads/upload.txt')
                 end_time = time.time()
 
                 total_time = (end_time - start_time) / 60 / 60
-                print(status)
                 print(total_time)
 
                 START_ROW += TABLE_ROW_SIZE

@@ -39,7 +39,7 @@ class EbayParser(Parser):
         r'The item you selected is unavailable', r'The item you selected has ended',
         r'This listing was ended', r'The listing you\'re looking for has ended',
         r'Service Unavailable - Zero size object', r'This item is out of stock.',
-        r'This listing sold', r'This listing ended'
+        r'This listing sold', r'This listing ended', r'This listing was ended by the seller'
     ]
     VARIATION_TRIGGERS = [
         r'<option value=-1'

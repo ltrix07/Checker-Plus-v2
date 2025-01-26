@@ -1,3 +1,4 @@
 ./db/#general/oAuth_creds.json
 ./token.json
 ./db/#general/shop_data.json
+./db/#general/credentials.json
