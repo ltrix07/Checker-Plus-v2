@@ -126,9 +126,9 @@ async def main():
                 messages = generate_json(updated_data, enum_mapping, standard_qty)
                 split_and_write_json(messages, shop_name, seller_id)
 
-                file_count = len([f for f in os.listdir('.\\uploads')
+                file_count = len([f for f in os.listdir('./uploads')
                                   if f.startswith(shop_name) and f.endswith(".json")])
-                json_file_paths = [os.path.join('.\\uploads', f"{shop_name}_{i}.json") for i in
+                json_file_paths = [os.path.join('./uploads', f"{shop_name}_{i}.json") for i in
                                    range(file_count, 0, -1)]
                 for json_file_path in json_file_paths:
                     process_file(json_file_path, MARKETPLACES, amz_creds)
