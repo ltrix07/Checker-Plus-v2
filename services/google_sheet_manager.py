@@ -201,9 +201,12 @@ class GoogleSheetManager:
             self.service.spreadsheets().batchUpdate(spreadsheetId=spreadsheet_id, body=body).execute()
         except HttpError as error:
             raise RuntimeError(f"Error adding rows: {error}")
-        
-    def update_sheet_data_by_sku(self, spreadsheet_id, worksheet_name, data, sku_column, columns_map, max_retries=10, retry_delay=60):
+
+    def update_sheet_data_by_sku(
+            self, spreadsheet_id, worksheet_name, data, sku_column, columns_map, max_retries=10, retry_delay=60
+    ):
         retries = 0
+
         while retries < max_retries:
             try:
                 sheet_data = self._fetch_sheet_data(spreadsheet_id, worksheet_name)
@@ -216,14 +219,19 @@ class GoogleSheetManager:
 
                 sku_index = headers.index(sku_column)
                 column_indices = self.map_column_indices(headers, columns_map)
+
                 sku_list = [row[sku_column] for row in data if sku_column in row]
 
-                data_rows = sheet_data[1:]
-                row_map = {
-                    row[sku_index]: idx + 2
-                    for idx, row in enumerate(data_rows)
-                    if len(row) > sku_index and row[sku_index] in sku_list
-                }
+                data_rows = [row for row in sheet_data[1:] if any(row)]
+
+                row_map = {}
+                for idx, row in enumerate(data_rows):
+                    if len(row) > sku_index and row[sku_index] in sku_list:
+                        if row[sku_index] not in row_map:
+                            row_map[row[sku_index]] = idx + 2
+
+                print(f"Row map: {row_map}")
+
                 updates = []
                 for row_data in data:
                     sku = row_data.get(sku_column)
@@ -235,6 +243,9 @@ class GoogleSheetManager:
                                 range_str = f'{worksheet_name}!{col_letter}{row_index}'
                                 updates.append({'range': range_str, 'values': [[value]]})
 
+                for update in updates:
+                    print(f"Update range: {update['range']}, Value: {update['values']}")
+
                 if updates:
                     self._batch_update_in_chunks(spreadsheet_id, updates)
                     print(f"Updated {len(updates)} cells in {worksheet_name}.")
@@ -242,8 +253,10 @@ class GoogleSheetManager:
                 else:
                     print("No updates were made because no matching SKU was found.")
                     return False
+
             except TimeoutError:
                 retries += 1
+                print(f"Timeout error occurred. Retrying {retries}/{max_retries}...")
                 time.sleep(retry_delay)
-        else:
-            raise RuntimeError(f"Failed to update data after {max_retries} attempts due to rate limiting.")
+
+        raise RuntimeError(f"Failed to update data after {max_retries} attempts due to rate limiting.")
