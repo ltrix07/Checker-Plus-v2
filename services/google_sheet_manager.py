@@ -230,8 +230,6 @@ class GoogleSheetManager:
                         if row[sku_index] not in row_map:
                             row_map[row[sku_index]] = idx + 2
 
-                print(f"Row map: {row_map}")
-
                 updates = []
                 for row_data in data:
                     sku = row_data.get(sku_column)
@@ -242,9 +240,6 @@ class GoogleSheetManager:
                                 col_letter = self._get_column_letter(column_indices[key])
                                 range_str = f'{worksheet_name}!{col_letter}{row_index}'
                                 updates.append({'range': range_str, 'values': [[value]]})
-
-                for update in updates:
-                    print(f"Update range: {update['range']}, Value: {update['values']}")
 
                 if updates:
                     self._batch_update_in_chunks(spreadsheet_id, updates)
