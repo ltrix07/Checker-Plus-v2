@@ -1,6 +1,6 @@
-./db/#general/oAuth_creds.json
-./token.json
-./db/#general/shop_data.json
-./db/#general/credentials.json
-./processing/process.csv
-./uploads/upload.txt
+db/#general/credentials.json
+db/#general/oAuth_creds.json
+token.json
+db/#general/shop_data.json
+processing/process.csv
+uploads/upload.txt
