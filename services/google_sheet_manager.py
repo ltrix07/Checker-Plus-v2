@@ -244,7 +244,7 @@ class GoogleSheetManager:
                 if updates:
                     self._batch_update_in_chunks(spreadsheet_id, updates)
                     print(f"Updated {len(updates)} cells in {worksheet_name}.")
-                    return True
+                    ret urn True
                 else:
                     print("No updates were made because no matching SKU was found.")
                     return False

@@ -41,6 +41,7 @@ def add_shop():
     while True:
         try:
             shop_name = input('Enter shop name: ').strip()
+            seller_id = input('Enter seller ID: ').strip()
             choice_marketplace = get_choice(
                 'Choose supplier marketplace:\n1. Ebay\n2. Amazon\n3. HomeDepot\n',
                 {'1', '2', '3'}
@@ -82,6 +83,7 @@ def add_shop():
             shop_inf = read_json('./db/#general/shop_data.json')
             shop_inf.append({
                 'shop_name': shop_name,
+                'seller_id': seller_id,
                 'worksheet': worksheet,
                 'columns': standard_columns,
                 'supplier_marketplace': supplier_marketplace,
