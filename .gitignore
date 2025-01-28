@@ -2,3 +2,5 @@
 ./token.json
 ./db/#general/shop_data.json
 ./db/#general/credentials.json
+./processing/process.csv
+./uploads/upload.txt
