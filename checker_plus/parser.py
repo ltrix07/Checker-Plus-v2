@@ -71,7 +71,8 @@ class EbayParser(Parser):
         r'and "},{"_type":"TextSpan","text":"(.*?)"',
         r'Get it by\\s+(.*?)<',
         r'Estimated on or before\\s+(.*?)<',
-        r'Estimated between\\s+and\\s+(.*?)</span>'
+        r'Estimated between\s*<.*?>(.*?)<\/span>\s*and\s*<.*?>(.*?)<\/span>',
+        r'Get it between\\s+and\\s+(.*?)</span>'
     ]
     SUPPLIER_NAME = [
         r'class="vim x-sellercard-atf".*?"_ssn":"(.*?)",',
