@@ -126,6 +126,8 @@ async def main():
                 messages = generate_json(updated_data, enum_mapping, standard_qty)
                 split_and_write_json(messages, shop_name, seller_id)
 
+                if not os.path.exists('./uploads'):
+                    os.makedirs('./uploads')
                 file_count = len([f for f in os.listdir('./uploads')
                                   if f.startswith(shop_name) and f.endswith(".json")])
                 json_file_paths = [os.path.join('./uploads', f"{shop_name}_{i}.json") for i in
