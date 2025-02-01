@@ -222,11 +222,11 @@ class GoogleSheetManager:
 
                 sku_list = [row[sku_column] for row in data if sku_column in row]
 
-                data_rows = [row for row in sheet_data[1:] if any(row)]
+                data_rows = sheet_data[1:]
 
                 row_map = {}
                 for idx, row in enumerate(data_rows):
-                    if len(row) > sku_index and row[sku_index] in sku_list:
+                    if sku_index < len(row) and row[sku_index] in sku_list:
                         if row[sku_index] not in row_map:
                             row_map[row[sku_index]] = idx + 2
 
