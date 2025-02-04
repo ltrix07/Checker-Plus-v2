@@ -120,7 +120,7 @@ class GoogleSheetManager:
         updates = []
         for i, row_data in enumerate(data, start=2):
             for key, value in row_data.items():
-                if key in column_indices:
+                if key in column_indices and value != '':
                     col_letter = self._get_column_letter(column_indices[key])
                     range_str = f'{worksheet_name}!{col_letter}{i}'
                     updates.append({'range': range_str, 'values': [[value]]})
