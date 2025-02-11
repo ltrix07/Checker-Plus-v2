@@ -236,6 +236,8 @@ class GoogleSheetManager:
                     if sku in row_map:
                         row_index = row_map[sku]
                         for key, value in row_data.items():
+                            if key == 'asin' and value == '':
+                                continue
                             if key in column_indices:
                                 col_letter = self._get_column_letter(column_indices[key])
                                 range_str = f'{worksheet_name}!{col_letter}{row_index}'
