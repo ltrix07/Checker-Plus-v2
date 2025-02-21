@@ -258,7 +258,7 @@ class EbayChecker(Checker):
 
         return parsed_data
 
-    async def parsing_page(self, item_data: Dict[str, Any]) -> Dict[str, Any] | None:
+    async def parsing_page(self, item_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         На основе информации в словаре 'item_data' что является элементом списка с данными из таблицы,
         собирает данные со страницы.
@@ -267,7 +267,13 @@ class EbayChecker(Checker):
         """
         page = item_data.pop("page")
         if not page:
-            return None
+            item_data.update({
+                "supplier_price": 0.0,
+                "supplier_shipping": 0.0,
+                "supplier_qty": 0,
+                "supplier_name": '{no_page}'
+            })
+            return item_data
 
         old_price = retype(item_data.get("supplier_price"), float, 0.0)
         old_shipping_price = retype(item_data.get("supplier_shipping"), float, 0.0)
